@@ -294,7 +294,7 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
 }
 
 .monthgrid-cell {
-  min-height: 80px;
+  min-height: 56px;
   padding: 6px 8px;
   border: 1px solid var(--border);
   background: var(--bg);
