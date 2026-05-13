@@ -1,0 +1,27 @@
+# .pre-commit-config.yaml — Wilson
+default_install_hook_types: [pre-commit]
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '(\.omc/|dashboard/vendor/|\.min\.(js|css)$)'
+      - id: end-of-file-fixer
+        exclude: '(\.omc/|dashboard/vendor/|\.min\.(js|css)$)'
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-merge-conflict
+
+  - repo: local
+    hooks:
+      - id: biome-check
+        name: Biome check (format + safe lint)
+        entry: biome check --write --no-errors-on-unmatched
+        language: system
+        files: '\.(js|jsx|mjs|cjs|ts|tsx|json|jsonc)$'
+        exclude: '(dashboard/vendor/|\.min\.(js|css)$)'
+        pass_filenames: true

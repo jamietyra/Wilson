@@ -1,0 +1,5 @@
+# .git-blame-ignore-revs — Wilson
+# 1회 셋업: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Wilson — biome formatter baseline (2026-05-13)
+9f656989d294cf2a785c69c206b78d40075c3069
