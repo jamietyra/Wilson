@@ -23,7 +23,9 @@
   font-weight: 600;
   flex-shrink: 0;
 }
-.timeline-header .timeline-title { flex: 0 0 auto; }
+.timeline-header .timeline-title {
+  flex: 0 0 auto;
+}
 
 .timeline-ranges {
   margin-left: auto;
@@ -47,7 +49,9 @@
   cursor: pointer;
   line-height: 1.3;
 }
-.timeline-range:hover { color: var(--text); }
+.timeline-range:hover {
+  color: var(--text);
+}
 .timeline-range.active {
   background: var(--accent);
   color: var(--bg);
@@ -78,7 +82,10 @@
   align-items: center;
   justify-content: center;
 }
-.timeline-clear:hover { background: var(--bg-hover); color: var(--text); }
+.timeline-clear:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
 
 .timeline-track {
   position: relative;
@@ -90,7 +97,7 @@
 
 /* 레인 구분선 (6개) */
 .timeline-track::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background-image: repeating-linear-gradient(
@@ -121,11 +128,21 @@
   padding-top: 2px;
 }
 /* 5 labels: now / -1m / -2m / -5m / -10m — 5%~95% 가시 영역에 분포 */
-.timeline-axis span:nth-child(1) { left: 5%; }   /* now  (logical 0 → visual 5) */
-.timeline-axis span:nth-child(2) { left: 14%; }  /* -1m  (logical 10 → 5+10*0.9) */
-.timeline-axis span:nth-child(3) { left: 23%; }  /* -2m  (logical 20 → 5+20*0.9) */
-.timeline-axis span:nth-child(4) { left: 50%; }  /* -5m  (logical 50 → 50) */
-.timeline-axis span:nth-child(5) { left: 95%; }  /* -10m (logical 100 → 95) */
+.timeline-axis span:nth-child(1) {
+  left: 5%;
+} /* now  (logical 0 → visual 5) */
+.timeline-axis span:nth-child(2) {
+  left: 14%;
+} /* -1m  (logical 10 → 5+10*0.9) */
+.timeline-axis span:nth-child(3) {
+  left: 23%;
+} /* -2m  (logical 20 → 5+20*0.9) */
+.timeline-axis span:nth-child(4) {
+  left: 50%;
+} /* -5m  (logical 50 → 50) */
+.timeline-axis span:nth-child(5) {
+  left: 95%;
+} /* -10m (logical 100 → 95) */
 
 /* ── 아이콘 (v4: CSS 애니메이션 없음, JS 가 left 직접 설정) ── */
 .timeline-icon {
@@ -139,7 +156,9 @@
   color: var(--text);
   box-sizing: border-box;
   cursor: help;
-  transition: opacity 150ms ease-out, background 150ms;
+  transition:
+    opacity 150ms ease-out,
+    background 150ms;
 }
 .timeline-icon svg {
   width: 100%;
@@ -148,21 +167,54 @@
 }
 
 /* ── tool 종류별 컬러 ── */
-.timeline-icon[data-tool="Read"]     { color: #3b82f6; background: rgba( 59, 130, 246, 0.22); }
-.timeline-icon[data-tool="Write"]    { color: #10b981; background: rgba( 16, 185, 129, 0.22); }
-.timeline-icon[data-tool="Edit"]     { color: #f59e0b; background: rgba(245, 158,  11, 0.24); }
-.timeline-icon[data-tool="Bash"]     { color: #a855f7; background: rgba(168,  85, 247, 0.22); }
-.timeline-icon[data-tool="Task"]     { color: #ec4899; background: rgba(236,  72, 153, 0.22); }
-.timeline-icon[data-tool="Glob"]     { color: #06b6d4; background: rgba(  6, 182, 212, 0.22); }
-.timeline-icon[data-tool="Web"]      { color: #6366f1; background: rgba( 99, 102, 241, 0.22); }
-.timeline-icon[data-tool="Todo"]     { color: #eab308; background: rgba(234, 179,   8, 0.22); }
-.timeline-icon[data-tool="Skill"]    { color: #f97316; background: rgba(249, 115,  22, 0.22); }
-.timeline-icon[data-tool="Playwright"] { color: #14b8a6; background: rgba( 20, 184, 166, 0.22); }
-.timeline-icon[data-tool="_default"] { color: #64748b; background: rgba(100, 116, 139, 0.28); }
+.timeline-icon[data-tool="Read"] {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.22);
+}
+.timeline-icon[data-tool="Write"] {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.22);
+}
+.timeline-icon[data-tool="Edit"] {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.24);
+}
+.timeline-icon[data-tool="Bash"] {
+  color: #a855f7;
+  background: rgba(168, 85, 247, 0.22);
+}
+.timeline-icon[data-tool="Task"] {
+  color: #ec4899;
+  background: rgba(236, 72, 153, 0.22);
+}
+.timeline-icon[data-tool="Glob"] {
+  color: #06b6d4;
+  background: rgba(6, 182, 212, 0.22);
+}
+.timeline-icon[data-tool="Web"] {
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.22);
+}
+.timeline-icon[data-tool="Todo"] {
+  color: #eab308;
+  background: rgba(234, 179, 8, 0.22);
+}
+.timeline-icon[data-tool="Skill"] {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.22);
+}
+.timeline-icon[data-tool="Playwright"] {
+  color: #14b8a6;
+  background: rgba(20, 184, 166, 0.22);
+}
+.timeline-icon[data-tool="_default"] {
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.28);
+}
 
 /* running = pulse halo (::before 가상 요소) */
 .timeline-icon[data-status="running"]::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -1px;
   border-radius: 6px;
@@ -170,18 +222,26 @@
   animation: timeline-pulse 1.4s ease-out infinite;
 }
 @keyframes timeline-pulse {
-  0%   { box-shadow: 0 0 0 0 currentColor; opacity: 0.8; }
-  100% { box-shadow: 0 0 0 7px transparent; opacity: 0; }
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 0.8;
+  }
+  100% {
+    box-shadow: 0 0 0 7px transparent;
+    opacity: 0;
+  }
 }
 
-.timeline-icon[data-status="done"]  { opacity: 0.9; }
+.timeline-icon[data-status="done"] {
+  opacity: 0.9;
+}
 .timeline-icon[data-status="error"] {
   border-color: #ef4444;
   color: #ef4444;
   background: rgba(239, 68, 68, 0.22);
 }
 .timeline-icon[data-status="error"]::after {
-  content: '✗';
+  content: "✗";
   position: absolute;
   right: -5px;
   top: -7px;

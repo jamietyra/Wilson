@@ -18,7 +18,7 @@ header .brand-wilson {
   font-style: italic;
   font-weight: 700;
   font-size: 1.25rem;
-  color: #8B1A1A;
+  color: #8b1a1a;
   letter-spacing: -0.015em;
   user-select: none;
   cursor: default;
@@ -34,9 +34,10 @@ header h1.page-nav-title {
   /* 헤더 중앙 정렬 — flex space-between으로 Wilson/theme-switch 사이 가운데 */
   font-size: 1.14rem;
   margin: 0 auto;
-  transition: color var(--duration-fast, 0.15s),
-              opacity var(--duration-fast, 0.15s),
-              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    color var(--duration-fast, 0.15s),
+    opacity var(--duration-fast, 0.15s),
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   -webkit-user-select: none;
   user-select: none;
@@ -44,26 +45,31 @@ header h1.page-nav-title {
 
 /* 타이틀 뒤에 전환 아이콘 — 항상 보이고 hover 시 또렷해짐 */
 header h1.page-nav-title::after {
-  content: ' \2194';              /* ↔ 양방향 전환 */
+  content: " \2194"; /* ↔ 양방향 전환 */
   margin-left: 0.35em;
   font-size: 0.72em;
   opacity: 0.55;
   color: var(--text-dim);
   vertical-align: 2px;
-  transition: opacity var(--duration-fast, 0.15s),
-              color var(--duration-fast, 0.15s),
-              transform var(--duration-fast, 0.15s);
+  transition:
+    opacity var(--duration-fast, 0.15s),
+    color var(--duration-fast, 0.15s),
+    transform var(--duration-fast, 0.15s);
   display: inline-block;
 }
 
-header h1.page-nav-title:hover { color: var(--accent); }
+header h1.page-nav-title:hover {
+  color: var(--accent);
+}
 header h1.page-nav-title:hover::after {
   opacity: 1;
   color: var(--accent);
   transform: translateX(2px);
 }
 
-header h1.page-nav-title:active { opacity: 0.7; }
+header h1.page-nav-title:active {
+  opacity: 0.7;
+}
 
 /* 전환 중 연속 클릭 방어 (§4c) */
 header h1.page-nav-title.is-navigating {
@@ -74,8 +80,9 @@ header h1.page-nav-title.is-navigating {
 /* ── 배경/테마 색 페이드 (body 레벨) ──────────────────── */
 /* body 자체가 베이지↔파랑으로 전환될 때 부드럽게. */
 body {
-  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── 나가는 애니메이션 (.page-leaving) ─────────────────── */
@@ -84,8 +91,9 @@ body.page-leaving main .main-content,
 body.page-leaving #usage-main {
   transform: translateX(-30px);
   opacity: 0;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 타이틀: 좌로 슬라이드 + 페이드 */
@@ -98,8 +106,9 @@ body.page-leaving header h1.page-nav-title {
 body.page-leaving #sessions-panel {
   transform: translateY(-12px);
   opacity: 0;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── 들어오는 애니메이션 (.page-entering) ───────────────── */
@@ -113,8 +122,9 @@ body.page-entering #usage-main {
 /* 클래스가 제거된 직후 자연스레 돌아오도록 transition 속성 상시 부여 */
 main .main-content,
 #usage-main {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.page-entering header h1.page-nav-title {
@@ -128,8 +138,9 @@ body.page-entering #sessions-panel {
 }
 
 #sessions-panel {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── Reduced motion 사용자 존중 ────────────────────────── */

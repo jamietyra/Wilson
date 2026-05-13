@@ -5,15 +5,15 @@
 
 /* ─── 8a. 파란 테마: --accent 계열만 swap ─── */
 body[data-page="usage"] {
-  --accent:      #2563eb;   /* 진한 파랑 — 타이틀, 활성 버튼 */
-  --accent-deep: #1e3a8a;   /* 더 진한 파랑 — 선택 셀, hover 강조 */
-  --accent-soft: #93c5fd;   /* 연한 파랑 — 히트맵 최약 셀 */
+  --accent: #2563eb; /* 진한 파랑 — 타이틀, 활성 버튼 */
+  --accent-deep: #1e3a8a; /* 더 진한 파랑 — 선택 셀, hover 강조 */
+  --accent-soft: #93c5fd; /* 연한 파랑 — 히트맵 최약 셀 */
 }
 
 /* ─── 메인 그리드 레이아웃 — monitor-agent와 좌측 폭 동일(600px) ─── */
 .usage-layout {
   display: grid;
-  grid-template-columns: 600px 1fr;  /* Wilson 600px 고정 = /agent 페이지와 정확히 동일 */
+  grid-template-columns: 600px 1fr; /* Wilson 600px 고정 = /agent 페이지와 정확히 동일 */
   flex: 1;
   overflow: hidden;
   min-height: 0;
@@ -50,7 +50,7 @@ body[data-page="usage"] #wilson-panel {
   border-top: 1px solid var(--border);
   padding: var(--space-md);
   background: var(--bg-panel);
-  contain: layout style;       /* 트리 전체 재렌더가 페이지 전체 리플로우로 번지지 않음 */
+  contain: layout style; /* 트리 전체 재렌더가 페이지 전체 리플로우로 번지지 않음 */
 }
 
 /* ─── 오른쪽 영역 타이틀 (Summary cards 위) ─── */
@@ -89,8 +89,13 @@ body[data-page="usage"] .last-refreshed.is-loading {
   animation: last-refresh-pulse 1.2s ease-in-out infinite;
 }
 @keyframes last-refresh-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.45; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
 }
 body[data-page="usage"] .refresh-btn {
   display: inline-flex;
@@ -125,12 +130,15 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   animation: refresh-spin 2.4s linear infinite;
 }
 @keyframes refresh-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ─── Top Projects — HTML 리스트 (Chart.js 대체) ─── */
 .top-projects-list {
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-xs);
 }
@@ -141,15 +149,22 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   gap: 10px;
   font-size: var(--text-xs);
 }
-.tp-tag { display: flex; justify-content: flex-start; }
+.tp-tag {
+  display: flex;
+  justify-content: flex-start;
+}
 .tp-bar {
-  position: relative; height: 10px;
+  position: relative;
+  height: 10px;
   background: var(--bg-hover);
   border-radius: 3px;
   overflow: hidden;
 }
 .tp-bar-fill {
-  position: absolute; left: 0; top: 0; bottom: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
   background: var(--accent);
   border-radius: 3px;
   transition: width 0.35s var(--ease-out, ease);
@@ -193,7 +208,7 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   flex-shrink: 0;
   min-height: 140px;
   padding: var(--space-md);
-  contain: layout style;       /* 내부 재렌더가 외부 레이아웃 흔들지 않게 격리 */
+  contain: layout style; /* 내부 재렌더가 외부 레이아웃 흔들지 않게 격리 */
 }
 
 /* Calendar 영역 컨테이너 (month grid만 — year heatmap은 2026-04-13 제거) */
@@ -209,7 +224,7 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   flex: 1;
   min-height: 320px;
   padding: var(--space-md);
-  contain: layout style;       /* 셀 patch가 주변 레이아웃으로 번지지 않음 */
+  contain: layout style; /* 셀 patch가 주변 레이아웃으로 번지지 않음 */
 }
 
 /* ─── Step 3: Month grid 컨테이너 스타일 ─── */
@@ -304,7 +319,9 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   gap: 2px;
   position: relative;
   font-family: var(--font-mono);
-  transition: box-shadow 0.12s ease, transform 0.12s ease;
+  transition:
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
 }
 
 .monthgrid-cell.is-empty {
@@ -437,7 +454,9 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   padding: 4px 14px;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .period-btn:hover {
@@ -460,10 +479,14 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
 }
 
 @media (max-width: 1000px) {
-  .summary-cards-row { grid-template-columns: repeat(3, 1fr); }
+  .summary-cards-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 @media (max-width: 640px) {
-  .summary-cards-row { grid-template-columns: repeat(2, 1fr); }
+  .summary-cards-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .summary-card {
@@ -506,9 +529,15 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   min-height: 1em; /* 값 없는 카드에서도 공간 유지 */
 }
 
-.delta-positive { color: var(--green); }
-.delta-negative { color: var(--red); }
-.delta-neutral  { color: var(--text-dim); }
+.delta-positive {
+  color: var(--green);
+}
+.delta-negative {
+  color: var(--red);
+}
+.delta-neutral {
+  color: var(--text-dim);
+}
 
 /* ─── Phase 3+4: 차트 패널 (Daily / Model / Top Projects) ─── */
 .chart-panel {
@@ -519,7 +548,7 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  contain: layout style;       /* 차트 내부 리렌더가 페이지 전체 레이아웃 흔들지 않음 */
+  contain: layout style; /* 차트 내부 리렌더가 페이지 전체 레이아웃 흔들지 않음 */
 }
 
 .chart-header {
@@ -562,7 +591,9 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
 }
 
 @media (max-width: 900px) {
-  #charts-row { grid-template-columns: 1fr; }
+  #charts-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .chart-toggle {
@@ -581,7 +612,9 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   padding: 3px 12px;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .chart-mode-btn:hover {
@@ -624,7 +657,9 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   color: var(--text-muted);
   font-size: 10px;
   user-select: none;
-  transition: transform 0.18s var(--ease-out), color 0.15s ease;
+  transition:
+    transform 0.18s var(--ease-out),
+    color 0.15s ease;
 }
 .sess-row:hover .sess-caret {
   color: var(--text-dim);
@@ -730,7 +765,9 @@ body[data-page="usage"] .refresh-btn:disabled .refresh-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
 }
 
 .modal-close:hover {

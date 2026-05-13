@@ -4,7 +4,7 @@
 .header-title {
   display: flex;
   align-items: center;
-  gap: var(--space-xl);        /* monitor-agent ↔ 토글 간격 확대 */
+  gap: var(--space-xl); /* monitor-agent ↔ 토글 간격 확대 */
 }
 .panel-toggles {
   display: flex;
@@ -18,7 +18,7 @@
   font-size: 0.82rem;
   font-style: italic;
   font-weight: 600;
-  padding: 4px 14px;           /* 글자 주변 공기 확보 */
+  padding: 4px 14px; /* 글자 주변 공기 확보 */
   border-radius: 12px;
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-out);
@@ -49,7 +49,7 @@
   margin-left: var(--space-lg);
   transition: all var(--duration-fast) var(--ease-out);
   line-height: 1.5;
-  width: 84px;           /* 폭 고정 — Beige/White/Dark 모두 수용, 제목 흔들림 없음 */
+  width: 84px; /* 폭 고정 — Beige/White/Dark 모두 수용, 제목 흔들림 없음 */
   text-align: center;
   box-sizing: border-box;
   flex-shrink: 0;
@@ -60,7 +60,9 @@
 }
 
 /* ── Panel Hidden ─────────────────────────────────────── */
-.panel-hidden { display: none !important; }
+.panel-hidden {
+  display: none !important;
+}
 
 /* ── State-based emphasis (미묘하게, 거슬리지 않게) ──── */
 /* solving 상태: 위쪽 얇은 빨간 선 (과한 glow 제거) */
@@ -89,12 +91,12 @@ body.wilson-state-thinking .activity-panel {
 /* ── Character Area ───────────────────────────────────── */
 .wilson-character {
   width: 100%;
-  min-height: 380px;        /* 말풍선 공간 확보 + 여백 적정화 */
+  min-height: 380px; /* 말풍선 공간 확보 + 여백 적정화 */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-md);     /* status → svg → bubble 일관된 리듬 */
+  gap: var(--space-md); /* status → svg → bubble 일관된 리듬 */
   padding: var(--space-xl) var(--space-md);
   flex-shrink: 0;
   color: var(--text);
@@ -111,8 +113,8 @@ body.wilson-state-thinking .activity-panel {
   will-change: transform;
   position: relative;
   z-index: 1;
-  border-radius: 50%;       /* 원형 포커스 링 */
-  outline: none;            /* 기본 outline 제거, focus-visible로 제어 */
+  border-radius: 50%; /* 원형 포커스 링 */
+  outline: none; /* 기본 outline 제거, focus-visible로 제어 */
 }
 .wilson-svg-wrap:focus-visible {
   outline: 3px solid var(--accent);
@@ -132,7 +134,7 @@ body.wilson-state-thinking .activity-panel {
   color: var(--text-dim);
   letter-spacing: 0.3px;
   min-width: 160px;
-  min-height: 1.6em;         /* 빈 상태에서도 공간 예약 — 배구공 위치 불변 */
+  min-height: 1.6em; /* 빈 상태에서도 공간 예약 — 배구공 위치 불변 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,13 +148,14 @@ body.wilson-state-thinking .activity-panel {
 /* ── Speech Bubble — clean card ──────────────────────── */
 .wilson-bubble {
   margin-top: 4px;
-  padding: 10px 14px;   /* action-dot 제거 — 일반 패딩 복구 */
+  padding: 10px 14px; /* action-dot 제거 — 일반 패딩 복구 */
   width: 240px;
   min-height: 56px;
   box-sizing: border-box;
   background: var(--bg-hover);
   color: var(--text);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Pretendard', 'Noto Sans KR', sans-serif;
+  font-family:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Pretendard", "Noto Sans KR", sans-serif;
   font-size: 0.72rem;
   font-weight: 400;
   line-height: 1.45;
@@ -162,8 +165,9 @@ body.wilson-state-thinking .activity-panel {
   justify-content: center;
   opacity: 0;
   transform: translateY(4px);
-  transition: opacity var(--duration-normal) var(--ease-out),
-              transform var(--duration-normal) var(--ease-out);
+  transition:
+    opacity var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out);
   pointer-events: none;
   position: relative;
   z-index: 1;
@@ -274,11 +278,21 @@ body.wilson-state-thinking .activity-panel {
   text-transform: lowercase;
   letter-spacing: 0;
 }
-.wilson-file-action.edit { color: var(--yellow); }
-.wilson-file-action.write { color: var(--green); }
-.wilson-file-action.read { color: var(--accent); }
-.wilson-file-action.delete { color: var(--red, #e84a3f); }
-.wilson-file-action.move { color: var(--magenta, #b574c8); }
+.wilson-file-action.edit {
+  color: var(--yellow);
+}
+.wilson-file-action.write {
+  color: var(--green);
+}
+.wilson-file-action.read {
+  color: var(--accent);
+}
+.wilson-file-action.delete {
+  color: var(--red, #e84a3f);
+}
+.wilson-file-action.move {
+  color: var(--magenta, #b574c8);
+}
 .wilson-file-time {
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
@@ -293,8 +307,13 @@ body.wilson-state-thinking .activity-panel {
   animation: wilson-breathe 2s ease-in-out infinite;
 }
 @keyframes wilson-breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
 }
 
 /* thinking — rapid wobble (eye-rolling feel) */
@@ -302,9 +321,16 @@ body.wilson-state-thinking .activity-panel {
   animation: wilson-think 0.5s ease-in-out infinite;
 }
 @keyframes wilson-think {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(8deg); }
-  75% { transform: rotate(-8deg); }
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(8deg);
+  }
+  75% {
+    transform: rotate(-8deg);
+  }
 }
 
 /* working — 3D 공 회전은 JS rAF가 #wilsonSurface 수평 이동만 담당 (실루엣/조명 고정) */
@@ -314,8 +340,15 @@ body.wilson-state-thinking .activity-panel {
   animation: wilson-glow 1s ease-in-out infinite;
 }
 @keyframes wilson-glow {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(139, 26, 26, 0.35)); }
-  50% { transform: scale(1.08); filter: drop-shadow(0 0 14px rgba(220, 220, 170, 0.6)); }
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 6px rgba(139, 26, 26, 0.35));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 14px rgba(220, 220, 170, 0.6));
+  }
 }
 
 /* sleeping — slow breathing + dim */
@@ -324,8 +357,13 @@ body.wilson-state-thinking .activity-panel {
   opacity: 0.6;
 }
 @keyframes wilson-sleep {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
 }
 
 /* ── Click Wobble ─────────────────────────────────────── */
@@ -333,19 +371,38 @@ body.wilson-state-thinking .activity-panel {
   animation: wilson-wobble 0.5s ease-out !important;
 }
 @keyframes wilson-wobble {
-  0% { transform: rotate(0); }
-  15% { transform: rotate(-12deg); }
-  30% { transform: rotate(10deg); }
-  45% { transform: rotate(-7deg); }
-  60% { transform: rotate(4deg); }
-  80% { transform: rotate(-2deg); }
-  100% { transform: rotate(0); }
+  0% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(-12deg);
+  }
+  30% {
+    transform: rotate(10deg);
+  }
+  45% {
+    transform: rotate(-7deg);
+  }
+  60% {
+    transform: rotate(4deg);
+  }
+  80% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
 }
 
 /* ── Utility Animations ───────────────────────────────── */
 @keyframes wilson-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 /* ── Reduced Motion ───────────────────────────────────── */
@@ -359,6 +416,10 @@ body.wilson-state-thinking .activity-panel {
 
 /* ── Small Screens ────────────────────────────────────── */
 @media (max-width: 900px) {
-  #wilson-panel { display: none; }
-  .panel-toggle[data-panel="wilson"] { display: none; }
+  #wilson-panel {
+    display: none;
+  }
+  .panel-toggle[data-panel="wilson"] {
+    display: none;
+  }
 }

@@ -23,7 +23,7 @@ export const wilsonConfig = {
   // feed.js — DOM 내 prompt-group 최대 개수 (#5 virtualization)
   // 초과 시 가장 오래된 그룹부터 FIFO 제거 → DOM 성장 상한. Load More로 복구 가능.
   MAX_FEED_GROUPS: 500,
-};
+}
 
 // COMPAT — 마이그레이션 기간에만 유지 (Tier 6에서 제거)
-if (typeof window !== 'undefined') window.wilsonConfig = wilsonConfig;
+if (typeof window !== "undefined") window.wilsonConfig = wilsonConfig

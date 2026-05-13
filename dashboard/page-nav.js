@@ -10,81 +10,81 @@
  * ES Module — export { pageNav }
  */
 
-const LEAVE_MS = 400;
+const LEAVE_MS = 400
 
 // 현재 route 읽기 (router.js의 parseRoute와 동등)
 function currentRoute() {
-  const h = (location.hash || '').replace(/^#\/?/, '').trim();
-  return h === 'usage' ? 'usage' : 'agent';
+  const h = (location.hash || "").replace(/^#\/?/, "").trim()
+  return h === "usage" ? "usage" : "agent"
 }
 
 function targetRoute() {
-  return currentRoute() === 'usage' ? 'agent' : 'usage';
+  return currentRoute() === "usage" ? "agent" : "usage"
 }
 
 function targetHash(route) {
-  return route === 'usage' ? '#/usage' : '#/agent';
+  return route === "usage" ? "#/usage" : "#/agent"
 }
 
 function navigateWithAnimation(toRoute) {
-  if (document.body.classList.contains('page-leaving')) return;
-  document.body.classList.add('page-leaving');
+  if (document.body.classList.contains("page-leaving")) return
+  document.body.classList.add("page-leaving")
 
-  const title = document.getElementById('page-nav-title')
-             || document.querySelector('.page-nav-title');
-  if (title) title.classList.add('is-navigating');
+  const title =
+    document.getElementById("page-nav-title") || document.querySelector(".page-nav-title")
+  if (title) title.classList.add("is-navigating")
 
   window.setTimeout(function () {
-    const h = targetHash(toRoute);
-    if (location.hash !== h) location.hash = h;
+    const h = targetHash(toRoute)
+    if (location.hash !== h) location.hash = h
     // hashchange → router applies → entrance 애니메이션 직후 재생
-  }, LEAVE_MS);
+  }, LEAVE_MS)
 }
 
 function playEntrance() {
-  document.body.classList.remove('page-leaving');
+  document.body.classList.remove("page-leaving")
 
-  const title = document.getElementById('page-nav-title')
-             || document.querySelector('.page-nav-title');
-  if (title) title.classList.remove('is-navigating');
+  const title =
+    document.getElementById("page-nav-title") || document.querySelector(".page-nav-title")
+  if (title) title.classList.remove("is-navigating")
 
-  document.body.classList.add('page-entering');
+  document.body.classList.add("page-entering")
   requestAnimationFrame(function () {
     requestAnimationFrame(function () {
-      document.body.classList.remove('page-entering');
-    });
-  });
+      document.body.classList.remove("page-entering")
+    })
+  })
 }
 
 function bindTitle() {
-  const title = document.getElementById('page-nav-title')
-             || document.querySelector('.page-nav-title');
-  if (!title) return;
-  title.onclick = null;
-  title.removeAttribute('onclick');
-  title.addEventListener('click', function (e) {
-    e.preventDefault();
-    navigateWithAnimation(targetRoute());
-  });
+  const title =
+    document.getElementById("page-nav-title") || document.querySelector(".page-nav-title")
+  if (!title) return
+  title.onclick = null
+  title.removeAttribute("onclick")
+  title.addEventListener("click", function (e) {
+    e.preventDefault()
+    navigateWithAnimation(targetRoute())
+  })
 }
 
 // hashchange / pageshow 시 entrance 재생 (router가 이미 body[data-route] 세팅 후 발화)
-window.addEventListener('hashchange', playEntrance);
-window.addEventListener('pageshow', playEntrance);
+window.addEventListener("hashchange", playEntrance)
+window.addEventListener("pageshow", playEntrance)
 
 function init() {
-  bindTitle();
-  playEntrance();
+  bindTitle()
+  playEntrance()
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init)
 } else {
-  init();
+  init()
 }
 
 export const pageNav = {
   navigate: navigateWithAnimation,
   target: targetRoute,
-};
-if (typeof window !== 'undefined') window.pageNav = pageNav;
+}
+if (typeof window !== "undefined") window.pageNav = pageNav
