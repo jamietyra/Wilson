@@ -14,25 +14,22 @@ function addSessionFilterBtn(project) {
   btn.className = "session-filter-btn active"
   btn.textContent = name
   // 공유 session-tag 모듈 사용 (monitor-usage와 색 동기화)
-  var color =
-    window.sessionTag && window.sessionTag.assign
-      ? window.sessionTag.assign(name)
-      : getSessionColor(name)
+  var color = window.sessionTag?.assign ? window.sessionTag.assign(name) : getSessionColor(name)
   btn.style.color = color.fg
   btn.style.background = color.bg
   btn.dataset.session = name
 
-  btn.onclick = function () {
+  btn.onclick = () => {
     if (activeSessionFilter === name) {
       // 이미 선택된 필터 해제 → 전체 보기
       activeSessionFilter = null
-      sessionFiltersEl.querySelectorAll(".session-filter-btn").forEach(function (b) {
+      sessionFiltersEl.querySelectorAll(".session-filter-btn").forEach((b) => {
         b.classList.add("active")
       })
     } else {
       // 이 세션만 필터
       activeSessionFilter = name
-      sessionFiltersEl.querySelectorAll(".session-filter-btn").forEach(function (b) {
+      sessionFiltersEl.querySelectorAll(".session-filter-btn").forEach((b) => {
         b.classList.toggle("active", b.dataset.session === name)
       })
     }
@@ -45,7 +42,7 @@ function addSessionFilterBtn(project) {
 // Toggle all expand/collapse
 var allExpanded = false
 var toggleAllBtn = document.getElementById("toggle-all")
-toggleAllBtn.onclick = function () {
+toggleAllBtn.onclick = () => {
   allExpanded = !allExpanded
   toggleAllBtn.textContent = allExpanded ? "▼ All" : "▶ All"
   var groups = activityList.querySelectorAll(".prompt-group")
@@ -64,7 +61,7 @@ toggleAllBtn.onclick = function () {
 
 var searchInput = document.getElementById("activity-search")
 var searchTimer = null
-searchInput.addEventListener("input", function () {
+searchInput.addEventListener("input", () => {
   if (searchTimer) clearTimeout(searchTimer)
   searchTimer = setTimeout(applyFilters, 150)
 })
@@ -99,19 +96,19 @@ function formatTime(isoStr) {
 }
 
 function formatDuration(seconds) {
-  if (seconds < 1) return Math.round(seconds * 1000) + "ms"
-  if (seconds < 60) return seconds.toFixed(1) + "s"
+  if (seconds < 1) return `${Math.round(seconds * 1000)}ms`
+  if (seconds < 60) return `${seconds.toFixed(1)}s`
   var m = Math.floor(seconds / 60)
   var s = Math.round(seconds % 60)
-  return m + "m " + s + "s"
+  return `${m}m ${s}s`
 }
 
 function formatElapsed(ms) {
   var s = Math.floor(ms / 1000)
   var m = Math.floor(s / 60)
   var h = Math.floor(m / 60)
-  if (h > 0) return h + "h " + (m % 60) + "m"
-  return m + "m " + (s % 60) + "s"
+  if (h > 0) return `${h}h ${m % 60}m`
+  return `${m}m ${s % 60}s`
 }
 
 var sessionColorCache = {}
@@ -160,8 +157,8 @@ function makeSessionTag(project) {
 var sessionStates = {}
 var toolItemMap = new Map() // tool_id → DOM element cache
 var isBatchLoading = false
-var IDLE_CLOSE_MS = (window.wilsonConfig && window.wilsonConfig.IDLE_CLOSE_MS) || 10000 // 최종 메시지 후 10초 무활동 시 그룹 자동 접힘
-var MAX_FEED_GROUPS = (window.wilsonConfig && window.wilsonConfig.MAX_FEED_GROUPS) || 500 // #5 virtualization — DOM 그룹 상한
+var IDLE_CLOSE_MS = window.wilsonConfig?.IDLE_CLOSE_MS || 10000 // 최종 메시지 후 10초 무활동 시 그룹 자동 접힘
+var MAX_FEED_GROUPS = window.wilsonConfig?.MAX_FEED_GROUPS || 500 // #5 virtualization — DOM 그룹 상한
 
 // #5 — DOM 상한 초과 시 가장 오래된 그룹부터 FIFO 제거 (toolItemMap/sessionStates/close timer 정리)
 function enforceGroupCap() {
@@ -206,13 +203,13 @@ function closeGroup(group) {
   if (tools) tools.classList.add("collapsed")
 }
 function cancelGroupCloseTimer(group) {
-  if (group && group._closeTimer) {
+  if (group?._closeTimer) {
     clearTimeout(group._closeTimer)
     group._closeTimer = null
   }
 }
 function _armCloseTimer(group, delayMs) {
-  group._closeTimer = setTimeout(function () {
+  group._closeTimer = setTimeout(() => {
     closeGroup(group)
     group._closeTimer = null
   }, delayMs)
@@ -225,17 +222,17 @@ function scheduleGroupClose(group, delayMs) {
   // 호버/포커스 시 타이머 취소, 이탈 시 재시작 — 읽는 중 갑작스런 접힘 방지
   if (!group._hoverBound) {
     group._hoverBound = true
-    group.addEventListener("mouseenter", function () {
+    group.addEventListener("mouseenter", () => {
       cancelGroupCloseTimer(group)
     })
-    group.addEventListener("mouseleave", function () {
+    group.addEventListener("mouseleave", () => {
       cancelGroupCloseTimer(group)
       if (group._closeDelay) _armCloseTimer(group, group._closeDelay)
     })
-    group.addEventListener("focusin", function () {
+    group.addEventListener("focusin", () => {
       cancelGroupCloseTimer(group)
     })
-    group.addEventListener("focusout", function () {
+    group.addEventListener("focusout", () => {
       if (group.matches(":hover")) return // 호버 유지 시 타이머 없음 유지
       cancelGroupCloseTimer(group)
       if (group._closeDelay) _armCloseTimer(group, group._closeDelay)
@@ -244,8 +241,8 @@ function scheduleGroupClose(group, delayMs) {
 }
 
 function getSessionKey(ev) {
-  if (ev && ev.isSubagent && ev.agentId) return "SUB:" + ev.agentId
-  return ev && ev.project ? ev.project : "IT"
+  if (ev?.isSubagent && ev.agentId) return `SUB:${ev.agentId}`
+  return ev?.project ? ev.project : "IT"
 }
 
 function getSessionState(key) {
@@ -256,7 +253,7 @@ function getSessionState(key) {
   return sessionStates[name]
 }
 
-function collapseSessionGroup(key) {
+function _collapseSessionGroup(key) {
   var s = getSessionState(key)
   if (!s.group) return
   var toggle = s.group.querySelector(".prompt-toggle")
@@ -267,23 +264,23 @@ function collapseSessionGroup(key) {
 
 function createGroup(timeStr, text, promptId, ev) {
   var key = getSessionKey(ev)
-  var project = ev && ev.project
+  var project = ev?.project
   // 모든 그룹은 기본 접힘 — 활동 발생 시 자동 펼침
   var sessionName = project || "IT"
   addSessionFilterBtn(sessionName)
 
   var group = document.createElement("div")
   group.className = "prompt-group"
-  if (ev && ev.isSubagent) group.classList.add("subagent-group")
+  if (ev?.isSubagent) group.classList.add("subagent-group")
   group.dataset.session = sessionName
   if (promptId) group.dataset.promptId = promptId
-  if (ev && ev.agentId) group.dataset.agentId = ev.agentId
+  if (ev?.agentId) group.dataset.agentId = ev.agentId
 
   var header = document.createElement("div")
   header.className = "prompt-header"
 
   var subBadge = ""
-  if (ev && ev.isSubagent) {
+  if (ev?.isSubagent) {
     var label = ev.agentType || "Agent"
     subBadge =
       '<span class="sub-badge" title="' +
@@ -293,12 +290,12 @@ function createGroup(timeStr, text, promptId, ev) {
       "</span>"
   }
 
-  var fullPromptText = ev && ev.text ? ev.text : text
+  var fullPromptText = ev?.text ? ev.text : text
   header.innerHTML = [
     '<span class="prompt-toggle">▼</span>',
     makeSessionTag(project),
     subBadge,
-    '<span class="prompt-time">' + timeStr + "</span>",
+    `<span class="prompt-time">${timeStr}</span>`,
     '<span class="prompt-text" data-tooltip="' +
       escapeHtml(fullPromptText) +
       '">' +
@@ -321,9 +318,13 @@ function createGroup(timeStr, text, promptId, ev) {
   activityList.appendChild(group)
   enforceGroupCap() // #5 — 신규 그룹 추가 후 상한 체크
 
-  // 모든 그룹 기본 접힘 (활동 발생 시 자동 펼침)
-  header.querySelector(".prompt-toggle").classList.add("collapsed")
-  tools.classList.add("collapsed")
+  // 실시간 prompt 이벤트는 펼친 상태로 시작 (활동이 보이도록).
+  // batch loading (새로고침/초기 init) 중에는 모든 그룹을 접힌 상태로.
+  // (previous) 등 fallback 그룹도 접힌 상태로.
+  if (isBatchLoading || !ev || ev.type !== "prompt") {
+    header.querySelector(".prompt-toggle").classList.add("collapsed")
+    tools.classList.add("collapsed")
+  }
 
   var s = getSessionState(key)
   s.group = group
@@ -336,7 +337,8 @@ function ensurePromptGroup(ev) {
     var timeStr = ev.time ? formatTime(ev.time) : ""
     var previewText = ev.text.replace(/\n/g, " ").slice(0, 160) || "(prompt)"
     createGroup(timeStr, previewText, ev.promptId, ev)
-    autoScroll()
+    // 새 prompt — isNearBottom 조건 무시하고 즉시 하단으로 강제 스크롤
+    activityList.scrollTop = activityList.scrollHeight
     return
   }
 
@@ -356,7 +358,7 @@ function updateGroupCount(ev) {
 // 활동 발생 시 그룹 자동 펼침 / 최종 메시지 후 자동 접힘 타이머
 function notifyGroupActivity(s, ev) {
   if (isBatchLoading) return
-  if (!s || !s.group) return
+  if (!s?.group) return
   openGroup(s.group)
   if (ev.type === "assistant_text") {
     scheduleGroupClose(s.group, IDLE_CLOSE_MS)
@@ -511,9 +513,9 @@ function addActivityItem(ev) {
   var target = ev.target || ""
 
   item.innerHTML = [
-    '<span class="activity-time">' + timeStr + "</span>",
+    `<span class="activity-time">${timeStr}</span>`,
     '<span class="activity-icon icon-start">\u25b6</span>',
-    '<span class="activity-name">' + escapeHtml(ev.name) + "</span>",
+    `<span class="activity-name">${escapeHtml(ev.name)}</span>`,
     '<span class="activity-target" data-tooltip="' +
       escapeHtml(target) +
       '">' +
@@ -568,7 +570,7 @@ function addActivityItemBefore(ev, beforeEl) {
     header.innerHTML = [
       '<span class="prompt-toggle collapsed">▼</span>',
       makeSessionTag(ev.project),
-      '<span class="prompt-time">' + timeStr + "</span>",
+      `<span class="prompt-time">${timeStr}</span>`,
       '<span class="prompt-text" data-tooltip="' +
         escapeHtml(fullPromptText) +
         '">' +
@@ -603,14 +605,11 @@ function addActivityItemBefore(ev, beforeEl) {
       '">' +
       escapeHtml(aFull) +
       "</span>"
-    // Load-more 경로도 동일하게 항상 클릭 가능 + 전체 원본 전달
-    {
-      aItem.style.cursor = "pointer"
-      aItem._outputData = { name: "Assistant", target: "", output: aFull, time: ev.time }
-      aItem.onclick = function () {
-        window.displayCode._clickedEl = this
-        if (window.displayOutput) window.displayOutput(this._outputData)
-      }
+    aItem.style.cursor = "pointer"
+    aItem._outputData = { name: "Assistant", target: "", output: aFull, time: ev.time }
+    aItem.onclick = function () {
+      window.displayCode._clickedEl = this
+      if (window.displayOutput) window.displayOutput(this._outputData)
     }
     prevToolsContainer.appendChild(aItem)
     return
@@ -677,9 +676,9 @@ function addActivityItemBefore(ev, beforeEl) {
   var timeStr = ev.time ? formatTime(ev.time) : ""
   var target = ev.target || ""
   item.innerHTML = [
-    '<span class="activity-time">' + timeStr + "</span>",
+    `<span class="activity-time">${timeStr}</span>`,
     '<span class="activity-icon icon-start">\u25b6</span>',
-    '<span class="activity-name">' + escapeHtml(ev.name) + "</span>",
+    `<span class="activity-name">${escapeHtml(ev.name)}</span>`,
     '<span class="activity-target" data-tooltip="' +
       escapeHtml(target) +
       '">' +
@@ -715,19 +714,19 @@ if (window.hoverTooltip && typeof window.hoverTooltip.bind === "function") {
 
 // ─── ES Module exports ───────────────────────────
 export {
+  activityList,
   addActivityItem,
   addActivityItemBefore,
   escapeHtml,
-  formatTime,
   formatDuration,
   formatElapsed,
-  activityList,
+  formatTime,
 }
 export const feed = {
-  startBatch: function () {
+  startBatch: () => {
     isBatchLoading = true
   },
-  endBatch: function () {
+  endBatch: () => {
     isBatchLoading = false
   },
 }

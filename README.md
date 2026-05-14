@@ -104,7 +104,7 @@ Click the **`monitor-agent`** title in the header to switch to `monitor-usage`; 
 
 #### Accuracy note
 
-Token cost is computed from Anthropic's public API rates (Opus 4.6 $15/$75 per M, Sonnet 4.6 $3/$15, Haiku 4.5 $1/$5) with proper cache-write/cache-read adjustments and per-event model resolution. **If you're on a Claude subscription plan this number is a theoretical "what-if" for pay-as-you-go API** — use it as a usage-intensity proxy, not an invoice.
+Token cost is computed from Anthropic's public API rates (Opus 4.7 $15/$75 per M, Sonnet 4.6 $3/$15, Haiku 4.5 $1/$5) with proper cache-write/cache-read adjustments and per-event model resolution. **If you're on a Claude subscription plan this number is a theoretical "what-if" for pay-as-you-go API** — use it as a usage-intensity proxy, not an invoice.
 
 ---
 

@@ -3,7 +3,7 @@
 
 export const wilsonConfig = {
   // feed.js — 최종 메시지 후 N ms 무활동 시 그룹 자동 접힘
-  IDLE_CLOSE_MS: 10000,
+  IDLE_CLOSE_MS: 3000,
 
   // tooltip.js — hover 후 툴팁 표시까지 기본 지연
   TOOLTIP_DEFAULT_DELAY_MS: 1500,
