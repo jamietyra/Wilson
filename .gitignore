@@ -1,4 +1,6 @@
 node_modules/
+# Dev-only lockfile (Biome formatter) — zero-deps 사용자 메시지 일관성 유지
+package-lock.json
 screenshots/
 offsets.json
 *.log
