@@ -1,5 +1,5 @@
-import test from "node:test"
 import assert from "node:assert/strict"
+import test from "node:test"
 import { migrateIndex, SCHEMA_VERSION } from "../lib/aggregator.mjs"
 
 test("SCHEMA_VERSION: 현재 버전 상수 노출", () => {

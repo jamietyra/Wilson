@@ -262,7 +262,9 @@ function renderSummaryCards(usageData, period) {
       if (k < sKey || k > eKey) return
       const d = byDate[k]
       if (!d || !d.bySession) return
-      Object.keys(d.bySession).forEach((sid) => set.add(sid))
+      Object.keys(d.bySession).forEach((sid) => {
+        set.add(sid)
+      })
     })
     return set.size
   }
@@ -551,7 +553,7 @@ function renderSessionsPanel(usageData) {
       let timeLabel = sess.date || ""
       if (sess.startTime) {
         const d = new Date(sess.startTime)
-        if (!isNaN(d.getTime())) {
+        if (!Number.isNaN(d.getTime())) {
           const mm = String(d.getMonth() + 1).padStart(2, "0")
           const dd = String(d.getDate()).padStart(2, "0")
           const hh = String(d.getHours()).padStart(2, "0")
@@ -777,7 +779,7 @@ function openDayModal(usageData, date) {
     let hhmm = ""
     if (s.startTime) {
       const d = new Date(s.startTime)
-      if (!isNaN(d.getTime())) {
+      if (!Number.isNaN(d.getTime())) {
         hhmm = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0")
       }
     }

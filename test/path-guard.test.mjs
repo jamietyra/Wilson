@@ -1,7 +1,7 @@
-import test from "node:test"
 import assert from "node:assert/strict"
-import path from "node:path"
 import os from "node:os"
+import path from "node:path"
+import test from "node:test"
 import { computeAllowedRoots, isPathAllowed } from "../lib/path-guard.mjs"
 
 const isWin = process.platform === "win32"

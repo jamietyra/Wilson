@@ -1,5 +1,5 @@
-import test from "node:test"
 import assert from "node:assert/strict"
+import test from "node:test"
 import { summarizePrompt } from "../lib/aggregator.mjs"
 
 test("summarizePrompt: null/undefined은 null", () => {

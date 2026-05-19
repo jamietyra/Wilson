@@ -1,6 +1,6 @@
-import test from "node:test"
 import assert from "node:assert/strict"
-import { parseUsageEvent, normalizeModel, getPricingSnapshot } from "../lib/usage-parser.mjs"
+import test from "node:test"
+import { getPricingSnapshot, normalizeModel, parseUsageEvent } from "../lib/usage-parser.mjs"
 
 // ─── normalizeModel ───────────────────────────────────────
 

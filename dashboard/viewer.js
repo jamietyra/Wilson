@@ -350,7 +350,7 @@ Object.defineProperty(window, "pendingHighlight", {
 })
 
 // ─── ES Module exports (신규 consumer용, 내부는 window.* 유지) ─
-export { displayCode, displayDiff, displayScreenshot, displayOutput, requestFileContent, fileCache }
+export { displayCode, displayDiff, displayOutput, displayScreenshot, fileCache, requestFileContent }
 export function setPendingHighlight(v) {
   pendingHighlight = v
 }

@@ -21,9 +21,8 @@ import { parseUsageEvent } from "./lib/usage-parser.mjs"
 const log = createLogger("server")
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const PORT = parseInt(process.env.MONITOR_PORT || "3141")
+const PORT = parseInt(process.env.MONITOR_PORT || "3141", 10)
 const MAX_FILE_LINES = 1500
-const DEBOUNCE_MS = 100 // 기본값 (역호환)
 const DEBOUNCE_LOW_MS = 10 // 저부하 (최근 1분 < 10 events)
 const DEBOUNCE_HIGH_MS = 500 // 고부하 (최근 1분 > 100 events)
 const RATE_WINDOW_MS = 60_000 // 이동 평균 윈도우
@@ -263,31 +262,6 @@ function discoverAllTranscripts() {
   // 시간순 정렬 (오래된 것 먼저)
   results.sort((a, b) => a.mtime - b.mtime)
   return results
-}
-
-// 단일 transcript 발견 (하위 호환)
-function discoverTranscript(cwd) {
-  const claudeDir = path.join(os.homedir(), ".claude")
-  const projectDirName = cwdToProjectDir(cwd)
-  const candidates = [
-    projectDirName,
-    projectDirName.charAt(0).toLowerCase() + projectDirName.slice(1),
-    projectDirName.charAt(0).toUpperCase() + projectDirName.slice(1),
-  ]
-  for (const candidate of candidates) {
-    const projectDir = path.join(claudeDir, "projects", candidate)
-    if (!fs.existsSync(projectDir)) continue
-    const jsonlFiles = fs
-      .readdirSync(projectDir)
-      .filter((f) => f.endsWith(".jsonl"))
-      .map((f) => ({
-        full: path.join(projectDir, f),
-        mtime: fs.statSync(path.join(projectDir, f)).mtimeMs,
-      }))
-      .sort((a, b) => b.mtime - a.mtime)
-    if (jsonlFiles.length > 0) return jsonlFiles[0].full
-  }
-  return null
 }
 
 // ─── JSONL 파싱 ─────────────────────────────────────────
@@ -1525,8 +1499,8 @@ const server = http.createServer((req, res) => {
 
   // 이벤트 페이지네이션 API (프롬프트 단위)
   if (url.pathname === "/api/events") {
-    const beforeIdx = parseInt(url.searchParams.get("before") || allRecentEvents.length)
-    const promptLimit = parseInt(url.searchParams.get("prompts") || 10)
+    const beforeIdx = parseInt(url.searchParams.get("before") || allRecentEvents.length, 10)
+    const promptLimit = parseInt(url.searchParams.get("prompts") || 10, 10)
     const result = sliceByPrompts(beforeIdx, promptLimit)
     res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" })
     res.end(JSON.stringify(result))

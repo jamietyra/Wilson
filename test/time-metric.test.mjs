@@ -1,5 +1,5 @@
-import test from "node:test"
 import assert from "node:assert/strict"
+import test from "node:test"
 import { computeActiveMs } from "../lib/time-metric.mjs"
 
 test("computeActiveMs: 빈 배열은 0", () => {
