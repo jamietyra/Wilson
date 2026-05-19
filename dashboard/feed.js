@@ -356,11 +356,13 @@ function updateGroupCount(ev) {
 }
 
 // 활동 발생 시 그룹 자동 펼침 / 최종 메시지 후 자동 접힘 타이머
+// isFinal=true (stop_reason: end_turn/stop_sequence) 인 assistant_text 만 close 트리거.
+// 중간 텍스트 (stop_reason: tool_use) 는 다음 활동 대기 — 닫지 않음.
 function notifyGroupActivity(s, ev) {
   if (isBatchLoading) return
   if (!s?.group) return
   openGroup(s.group)
-  if (ev.type === "assistant_text") {
+  if (ev.type === "assistant_text" && ev.isFinal) {
     scheduleGroupClose(s.group, IDLE_CLOSE_MS)
   } else {
     cancelGroupCloseTimer(s.group)

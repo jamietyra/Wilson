@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 /**
  * wilson Server
  * Real-time activity dashboard for Claude Code — http://localhost:3141
@@ -6,16 +7,16 @@
  * Usage: node server.mjs
  */
 
-import http from "node:http"
 import fs from "node:fs"
-import path from "node:path"
+import http from "node:http"
 import os from "node:os"
+import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { aggregateAll } from "./lib/aggregator.mjs"
-import { parseUsageEvent } from "./lib/usage-parser.mjs"
-import { computeAllowedRoots, isPathAllowed } from "./lib/path-guard.mjs"
 import { computeAllowedOrigins, matchOrigin } from "./lib/cors-guard.mjs"
 import { createLogger } from "./lib/logger.mjs"
+import { computeAllowedRoots, isPathAllowed } from "./lib/path-guard.mjs"
+import { parseUsageEvent } from "./lib/usage-parser.mjs"
 
 const log = createLogger("server")
 
@@ -418,6 +419,9 @@ function processEntry(entry, state) {
   }
 
   if (entry.message?.role === "assistant" && Array.isArray(entry.message.content)) {
+    // stop_reason "end_turn"/"stop_sequence" = 진짜 최종 메시지, "tool_use" = 중간 텍스트
+    const stopReason = entry.message.stop_reason
+    const isFinal = stopReason === "end_turn" || stopReason === "stop_sequence"
     for (const block of entry.message.content) {
       if (block.type === "text" && block.text && block.text.trim().length > 0) {
         events.push({
@@ -425,6 +429,7 @@ function processEntry(entry, state) {
           text: block.text,
           time: timestamp.toISOString(),
           promptId: state.promptId || 0,
+          isFinal,
         })
         break // 첫 텍스트 블록만
       }
