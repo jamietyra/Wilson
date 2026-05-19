@@ -139,15 +139,11 @@
     </section>
 
     <section id="charts-row">
-      <section id="model-breakdown-chart" class="chart-panel">
+      <section id="hourly-heatmap-chart" class="chart-panel">
         <div class="chart-header">
-          <h3>Model Breakdown</h3>
-          <div class="chart-toggle">
-            <button type="button" class="chart-mode-btn active" data-mode="tokens">Tokens</button>
-            <button type="button" class="chart-mode-btn" data-mode="cost">Cost</button>
-          </div>
+          <h3>Hourly Activity <span class="chart-subtitle">(UTC · tokens)</span></h3>
         </div>
-        <div class="chart-body"><canvas></canvas></div>
+        <div class="chart-body"><div class="heatmap-grid"></div></div>
       </section>
 
       <section id="top-projects-chart" class="chart-panel">

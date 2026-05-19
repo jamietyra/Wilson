@@ -411,6 +411,71 @@ function bindModelToggle() {
   toggleBound = true
 }
 
+// ── Hourly Heatmap (요일 × 시간) — #32 ──────────────────
+// byHour 는 UTC 기준. matrix[weekday(0=Sun..6=Sat)][hour(0..23)] = tokens 누적.
+function sumTokenObj(tokens) {
+  if (!tokens) return 0
+  let total = 0
+  for (const k of Object.keys(tokens)) total += tokens[k] || 0
+  return total
+}
+
+function buildHourlyHeatmap(usageData, period) {
+  const [start, end] = rangeForPeriod(period === "day" ? "week" : period)
+  const startKey = isoDate(start)
+  const endKey = isoDate(end)
+  const matrix = Array.from({ length: 7 }, () => new Array(24).fill(0))
+  const byDate = (usageData && usageData.byDate) || {}
+  let maxVal = 0
+  for (const dateKey of Object.keys(byDate)) {
+    if (dateKey < startKey || dateKey > endKey) continue
+    const day = byDate[dateKey]
+    if (!day || !day.byHour) continue
+    const d = new Date(`${dateKey}T00:00:00Z`)
+    const wd = d.getUTCDay()
+    for (const hourKey of Object.keys(day.byHour)) {
+      const hr = day.byHour[hourKey]
+      if (!hr || !hr.tokens) continue
+      const t = sumTokenObj(hr.tokens)
+      const h = parseInt(hourKey, 10)
+      if (h < 0 || h > 23) continue
+      matrix[wd][h] += t
+      if (matrix[wd][h] > maxVal) maxVal = matrix[wd][h]
+    }
+  }
+  return { matrix, maxVal }
+}
+
+function renderHourlyHeatmap(usageData, period) {
+  const container = document.querySelector("#hourly-heatmap-chart .heatmap-grid")
+  if (!container) return
+  const { matrix, maxVal } = buildHourlyHeatmap(usageData, period)
+  const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  const out = []
+  // 헤더 행: 시간 라벨 (4시간 간격)
+  out.push('<div class="hh-row hh-header"><span class="hh-day-label"></span>')
+  for (let h = 0; h < 24; h++) {
+    const label = h % 4 === 0 ? String(h).padStart(2, "0") : ""
+    out.push(`<span class="hh-hour-label">${label}</span>`)
+  }
+  out.push("</div>")
+  // 7 요일 행
+  for (let w = 0; w < 7; w++) {
+    out.push(`<div class="hh-row"><span class="hh-day-label">${weekdayLabels[w]}</span>`)
+    for (let h = 0; h < 24; h++) {
+      const v = matrix[w][h]
+      const intensity = maxVal > 0 ? v / maxVal : 0
+      const hourStr = String(h).padStart(2, "0")
+      const tooltip = `${weekdayLabels[w]} ${hourStr}:00 UTC · ${formatTokens(v)}`
+      out.push(
+        `<span class="hh-cell" style="--hh-intensity:${intensity.toFixed(3)}" data-tooltip="${tooltip}"></span>`,
+      )
+    }
+    out.push("</div>")
+  }
+  container.innerHTML = out.join("")
+}
+
 // ── 일괄 렌더 ──────────────────────────────────────────
 function renderAll(usageData, period) {
   if (!usageData) return
@@ -420,6 +485,7 @@ function renderAll(usageData, period) {
   renderDailyUsageChart(usageData, lastPeriod)
   renderModelBreakdown(usageData, lastPeriod, currentMode)
   renderTopProjects(usageData, lastPeriod)
+  renderHourlyHeatmap(usageData, lastPeriod)
 }
 
 // ── 전역 API 노출 ──────────────────────────────────────
@@ -427,6 +493,7 @@ export const usageCharts = {
   renderDailyUsageChart,
   renderModelBreakdown,
   renderTopProjects,
+  renderHourlyHeatmap,
   renderAll,
   get currentMode() {
     return currentMode
