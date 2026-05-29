@@ -363,94 +363,150 @@
   <text x="1054" y="202" class="up" font-size="9" font-weight="700">▲ +56</text>
   <text x="1086" y="202" class="muted" font-size="9">vs last month</text>
 
-  <!-- ===== Daily Usage bar chart ===== -->
+  <!-- ===== Daily Usage stacked-by-model bar chart ===== -->
   <text x="436" y="236" class="serif accent" font-size="13" font-weight="600">Daily Usage</text>
+  <!-- model legend (usage-charts.js MODEL_COLORS와 동일 색상) -->
+  <g font-size="9">
+    <rect x="540" y="228" width="9" height="9" fill="#a855f7" rx="2"/>
+    <text x="552" y="236" class="dim">Opus 4.8</text>
+    <rect x="612" y="228" width="9" height="9" fill="#2563eb" rx="2"/>
+    <text x="624" y="236" class="dim">Opus 4.7</text>
+    <rect x="684" y="228" width="9" height="9" fill="#22c55e" rx="2"/>
+    <text x="696" y="236" class="dim">Sonnet 4.6</text>
+    <rect x="772" y="228" width="9" height="9" fill="#eab308" rx="2"/>
+    <text x="784" y="236" class="dim">Haiku 4.5</text>
+  </g>
   <text x="1184" y="236" text-anchor="end" class="muted" font-size="9">tokens</text>
   <line x1="436" y1="242" x2="1184" y2="242" stroke="#3a332e" opacity="0.35"/>
 
-  <!-- Chart area 248-340 (92 tall) with baseline at 336 -->
+  <!-- Chart area 248-336 with baseline at 336 -->
   <line x1="436" y1="336" x2="1184" y2="336" stroke="#3a332e" opacity="0.4"/>
   <!-- Y axis ticks (inside chart area, left margin) -->
   <text x="458" y="252" text-anchor="end" class="muted" font-size="8">180K</text>
   <text x="458" y="294" text-anchor="end" class="muted" font-size="8">90K</text>
   <text x="458" y="336" text-anchor="end" class="muted" font-size="8">0</text>
 
-  <!-- 7 bars (Mon-Sun) — width 80, gap 20 -->
+  <!-- 7 stacked bars (Mon-Sun, width 80) — bottom→top: Opus 4.7 / Opus 4.8 / Sonnet 4.6 / Haiku 4.5 -->
   <g>
-    <rect x="460" y="288" width="80" height="48" fill="#2563eb" rx="2"/>
+    <!-- Mon 95K -->
+    <rect x="460" y="314" width="80" height="22" fill="#2563eb"/>
+    <rect x="460" y="300" width="80" height="14" fill="#a855f7"/>
+    <rect x="460" y="293" width="80" height="7" fill="#22c55e"/>
+    <rect x="460" y="288" width="80" height="5" fill="#eab308"/>
     <text x="500" y="352" text-anchor="middle" class="muted" font-size="9">Mon</text>
     <text x="500" y="283" text-anchor="middle" class="deep" font-size="9" font-weight="600">95K</text>
 
-    <rect x="560" y="260" width="80" height="76" fill="#2563eb" rx="2"/>
+    <!-- Tue 152K -->
+    <rect x="560" y="302" width="80" height="34" fill="#2563eb"/>
+    <rect x="560" y="279" width="80" height="23" fill="#a855f7"/>
+    <rect x="560" y="268" width="80" height="11" fill="#22c55e"/>
+    <rect x="560" y="260" width="80" height="8" fill="#eab308"/>
     <text x="600" y="352" text-anchor="middle" class="muted" font-size="9">Tue</text>
     <text x="600" y="255" text-anchor="middle" class="deep" font-size="9" font-weight="600">152K</text>
 
-    <rect x="660" y="296" width="80" height="40" fill="#2563eb" rx="2"/>
+    <!-- Wed 78K -->
+    <rect x="660" y="318" width="80" height="18" fill="#2563eb"/>
+    <rect x="660" y="306" width="80" height="12" fill="#a855f7"/>
+    <rect x="660" y="300" width="80" height="6" fill="#22c55e"/>
+    <rect x="660" y="296" width="80" height="4" fill="#eab308"/>
     <text x="700" y="352" text-anchor="middle" class="muted" font-size="9">Wed</text>
     <text x="700" y="291" text-anchor="middle" class="deep" font-size="9" font-weight="600">78K</text>
 
-    <rect x="760" y="248" width="80" height="88" fill="#2563eb" rx="2"/>
+    <!-- Thu 178K -->
+    <rect x="760" y="296" width="80" height="40" fill="#2563eb"/>
+    <rect x="760" y="270" width="80" height="26" fill="#a855f7"/>
+    <rect x="760" y="257" width="80" height="13" fill="#22c55e"/>
+    <rect x="760" y="248" width="80" height="9" fill="#eab308"/>
     <text x="800" y="352" text-anchor="middle" class="muted" font-size="9">Thu</text>
     <text x="800" y="243" text-anchor="middle" class="deep" font-size="9" font-weight="600">178K</text>
 
-    <rect x="860" y="276" width="80" height="60" fill="#2563eb" rx="2"/>
+    <!-- Fri 118K -->
+    <rect x="860" y="309" width="80" height="27" fill="#2563eb"/>
+    <rect x="860" y="291" width="80" height="18" fill="#a855f7"/>
+    <rect x="860" y="282" width="80" height="9" fill="#22c55e"/>
+    <rect x="860" y="276" width="80" height="6" fill="#eab308"/>
     <text x="900" y="352" text-anchor="middle" class="muted" font-size="9">Fri</text>
     <text x="900" y="271" text-anchor="middle" class="deep" font-size="9" font-weight="600">118K</text>
 
-    <rect x="960" y="304" width="80" height="32" fill="#2563eb" rx="2"/>
+    <!-- Sat 62K -->
+    <rect x="960" y="322" width="80" height="14" fill="#2563eb"/>
+    <rect x="960" y="312" width="80" height="10" fill="#a855f7"/>
+    <rect x="960" y="307" width="80" height="5" fill="#22c55e"/>
+    <rect x="960" y="304" width="80" height="3" fill="#eab308"/>
     <text x="1000" y="352" text-anchor="middle" class="muted" font-size="9">Sat</text>
     <text x="1000" y="299" text-anchor="middle" class="deep" font-size="9" font-weight="600">62K</text>
 
-    <rect x="1060" y="268" width="80" height="68" fill="#2563eb" rx="2"/>
+    <!-- Sun 135K -->
+    <rect x="1060" y="305" width="80" height="31" fill="#2563eb"/>
+    <rect x="1060" y="285" width="80" height="20" fill="#a855f7"/>
+    <rect x="1060" y="275" width="80" height="10" fill="#22c55e"/>
+    <rect x="1060" y="268" width="80" height="7" fill="#eab308"/>
     <text x="1100" y="352" text-anchor="middle" class="muted" font-size="9">Sun</text>
     <text x="1100" y="263" text-anchor="middle" class="deep" font-size="9" font-weight="600">135K</text>
   </g>
 
-  <!-- ===== Model Breakdown donut + Top Projects ===== -->
+  <!-- Daily tooltip mockup (hover Thu) — 세그먼트별 토큰·$ + 합계 (구 "4M · $510.3" 단일 표시 대체) -->
+  <g>
+    <path d="M 850 286 L 842 290 L 850 294 Z" fill="#141210" stroke="#3a332e" stroke-width="0.8"/>
+    <rect x="850" y="250" width="160" height="94" rx="4" fill="#141210" stroke="#3a332e" opacity="0.97"/>
+    <text x="860" y="265" class="ui ink" font-size="10" font-weight="700">Thu · 05-22</text>
+    <circle cx="866" cy="277" r="3.5" fill="#a855f7"/>
+    <text x="876" y="280" class="ui ink" font-size="9">Opus 4.8</text>
+    <text x="1002" y="280" text-anchor="end" class="mono dim" font-size="9">68K · $1.70</text>
+    <circle cx="866" cy="290" r="3.5" fill="#2563eb"/>
+    <text x="876" y="293" class="ui ink" font-size="9">Opus 4.7</text>
+    <text x="1002" y="293" text-anchor="end" class="mono dim" font-size="9">78K · $1.95</text>
+    <circle cx="866" cy="303" r="3.5" fill="#22c55e"/>
+    <text x="876" y="306" class="ui ink" font-size="9">Sonnet 4.6</text>
+    <text x="1002" y="306" text-anchor="end" class="mono dim" font-size="9">22K · $0.33</text>
+    <circle cx="866" cy="316" r="3.5" fill="#eab308"/>
+    <text x="876" y="319" class="ui ink" font-size="9">Haiku 4.5</text>
+    <text x="1002" y="319" text-anchor="end" class="mono dim" font-size="9">10K · $0.05</text>
+    <line x1="860" y1="326" x2="1002" y2="326" stroke="#3a332e"/>
+    <text x="876" y="339" class="ui ink" font-size="9" font-weight="700">합계</text>
+    <text x="1002" y="339" text-anchor="end" class="mono soft" font-size="9" font-weight="700">178K · $4.03</text>
+  </g>
+
+  <!-- ===== Hourly Activity heatmap + Top Projects ===== -->
   <line x1="420" y1="370" x2="1200" y2="370" stroke="#3a332e" opacity="0.35"/>
 
-  <text x="436" y="390" class="serif accent" font-size="13" font-weight="600">Model Breakdown</text>
+  <text x="436" y="390" class="serif accent" font-size="13" font-weight="600">Hourly Activity <tspan class="muted" font-size="9" font-weight="400">(UTC · tokens)</tspan></text>
   <text x="800" y="390" class="serif accent" font-size="13" font-weight="600">Top Projects</text>
 
-  <!-- Donut (center 540, 468; r_outer 54, r_inner 32) — 5 세그먼트 clockwise -->
-  <!-- 색상: 실제 앱(usage-charts.js)의 MODEL_COLORS와 정렬 (Opus 4.7 blue / 4.6 wine) -->
-  <!-- Opus 4.7 25% (0° → 90°) — blue -->
-  <path d="M 540 414 A 54 54 0 0 1 594 468 L 572 468 A 32 32 0 0 0 540 436 Z" fill="#2563eb"/>
-  <!-- Opus 4.6 15% (90° → 144°) — wine (legacy) -->
-  <path d="M 594 468 A 54 54 0 0 1 571.74 511.69 L 558.81 493.89 A 32 32 0 0 0 572 468 Z" fill="#8e1e3a"/>
-  <!-- Sonnet 4.6 30% (144° → 252°) — green -->
-  <path d="M 571.74 511.69 A 54 54 0 0 1 488.64 484.69 L 509.56 477.89 A 32 32 0 0 0 558.81 493.89 Z" fill="#22c55e"/>
-  <!-- Haiku 4.5 25% (252° → 342°) — yellow -->
-  <path d="M 488.64 484.69 A 54 54 0 0 1 523.31 416.64 L 530.11 437.56 A 32 32 0 0 0 509.56 477.89 Z" fill="#eab308"/>
-  <!-- Unknown 5% (342° → 360°) — gray -->
-  <path d="M 523.31 416.64 A 54 54 0 0 1 540 414 L 540 436 A 32 32 0 0 0 530.11 437.56 Z" fill="#9ca3af"/>
-
-  <!-- donut center text -->
-  <text x="540" y="465" text-anchor="middle" class="serif deep" font-size="14" font-weight="700">1.2B</text>
-  <text x="540" y="478" text-anchor="middle" class="muted" font-size="8">total</text>
-
-  <!-- Legend (5 models, spacing 16px) -->
-  <rect x="625" y="400" width="10" height="10" fill="#2563eb" rx="2"/>
-  <text x="640" y="409" class="ink" font-size="11">Opus 4.7</text>
-  <text x="770" y="409" text-anchor="end" class="mono dim" font-size="10">25%</text>
-
-  <rect x="625" y="418" width="10" height="10" fill="#8e1e3a" rx="2"/>
-  <text x="640" y="427" class="ink" font-size="11">Opus 4.6</text>
-  <text x="770" y="427" text-anchor="end" class="mono dim" font-size="10">15%</text>
-
-  <rect x="625" y="436" width="10" height="10" fill="#22c55e" rx="2"/>
-  <text x="640" y="445" class="ink" font-size="11">Sonnet 4.6</text>
-  <text x="770" y="445" text-anchor="end" class="mono dim" font-size="10">30%</text>
-
-  <rect x="625" y="454" width="10" height="10" fill="#eab308" rx="2"/>
-  <text x="640" y="463" class="ink" font-size="11">Haiku 4.5</text>
-  <text x="770" y="463" text-anchor="end" class="mono dim" font-size="10">25%</text>
-
-  <rect x="625" y="472" width="10" height="10" fill="#9ca3af" rx="2"/>
-  <text x="640" y="481" class="ink" font-size="11">Unknown</text>
-  <text x="770" y="481" text-anchor="end" class="mono dim" font-size="10">5%</text>
-
-  <!-- Top Projects list -->
+  <!-- 7 weekday × 24 hour heatmap — .hh-cell = hsl(217,91%,60%)(#3b82f6) 강도별 투명도 -->
+  <g>
+    <!-- hour labels (4h 간격) -->
+    <g class="mono muted" font-size="7" text-anchor="middle">
+      <text x="476" y="400">00</text>
+      <text x="528" y="400">04</text>
+      <text x="580" y="400">08</text>
+      <text x="632" y="400">12</text>
+      <text x="684" y="400">16</text>
+      <text x="736" y="400">20</text>
+    </g>
+    <!-- Sun -->
+    <text x="464" y="413" text-anchor="end" class="mono dim" font-size="8">Sun</text>
+    <rect x="470" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.20"/><rect x="483" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.35"/><rect x="496" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.39"/><rect x="509" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.35"/><rect x="522" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.39"/><rect x="535" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.43"/><rect x="548" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.50"/><rect x="561" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.63"/><rect x="574" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.55"/><rect x="587" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.62"/><rect x="600" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.56"/><rect x="613" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.57"/><rect x="626" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.47"/><rect x="639" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.41"/><rect x="652" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.44"/><rect x="665" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.36"/><rect x="678" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.29"/><rect x="691" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.21"/><rect x="704" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.10"/><rect x="717" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.05"/><rect x="730" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.12"/><rect x="743" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.11"/><rect x="756" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.13"/><rect x="769" y="404" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.16"/>
+    <!-- Mon -->
+    <text x="464" y="427" text-anchor="end" class="mono dim" font-size="8">Mon</text>
+    <rect x="470" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.31"/><rect x="483" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.37"/><rect x="496" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.43"/><rect x="509" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.49"/><rect x="522" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.55"/><rect x="535" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.61"/><rect x="548" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.72"/><rect x="561" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.74"/><rect x="574" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.64"/><rect x="587" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.86"/><rect x="600" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.78"/><rect x="613" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.80"/><rect x="626" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.67"/><rect x="639" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.59"/><rect x="652" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.49"/><rect x="665" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.39"/><rect x="678" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.41"/><rect x="691" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.31"/><rect x="704" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.17"/><rect x="717" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.10"/><rect x="730" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.05"/><rect x="743" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.05"/><rect x="756" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.19"/><rect x="769" y="418" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.24"/>
+    <!-- Tue -->
+    <text x="464" y="441" text-anchor="end" class="mono dim" font-size="8">Tue</text>
+    <rect x="470" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.35"/><rect x="483" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.42"/><rect x="496" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.49"/><rect x="509" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.43"/><rect x="522" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.50"/><rect x="535" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.68"/><rect x="548" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.79"/><rect x="561" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.81"/><rect x="574" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.71"/><rect x="587" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.82"/><rect x="600" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.75"/><rect x="613" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.87"/><rect x="626" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.74"/><rect x="639" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.65"/><rect x="652" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.55"/><rect x="665" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.45"/><rect x="678" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.35"/><rect x="691" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.24"/><rect x="704" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.21"/><rect x="717" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.13"/><rect x="730" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.09"/><rect x="743" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.08"/><rect x="756" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.12"/><rect x="769" y="432" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.17"/>
+    <!-- Wed -->
+    <text x="464" y="455" text-anchor="end" class="mono dim" font-size="8">Wed</text>
+    <rect x="470" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.36"/><rect x="483" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.42"/><rect x="496" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.48"/><rect x="509" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.42"/><rect x="522" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.48"/><rect x="535" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.54"/><rect x="548" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.64"/><rect x="561" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.77"/><rect x="574" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.68"/><rect x="587" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.78"/><rect x="600" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.70"/><rect x="613" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.72"/><rect x="626" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.59"/><rect x="639" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.63"/><rect x="652" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.53"/><rect x="665" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.44"/><rect x="678" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.35"/><rect x="691" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.25"/><rect x="704" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.12"/><rect x="717" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.05"/><rect x="730" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.12"/><rect x="743" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.11"/><rect x="756" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.14"/><rect x="769" y="446" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.18"/>
+    <!-- Thu -->
+    <text x="464" y="469" text-anchor="end" class="mono dim" font-size="8">Thu</text>
+    <rect x="470" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.31"/><rect x="483" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.38"/><rect x="496" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.56"/><rect x="509" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.50"/><rect x="522" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.57"/><rect x="535" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.64"/><rect x="548" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.75"/><rect x="561" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.77"/><rect x="574" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.67"/><rect x="587" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.89"/><rect x="600" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.81"/><rect x="613" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.83"/><rect x="626" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.69"/><rect x="639" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.61"/><rect x="652" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.51"/><rect x="665" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.52"/><rect x="678" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.41"/><rect x="691" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.31"/><rect x="704" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.17"/><rect x="717" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.09"/><rect x="730" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.05"/><rect x="743" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.04"/><rect x="756" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.18"/><rect x="769" y="460" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.24"/>
+    <!-- Fri -->
+    <text x="464" y="483" text-anchor="end" class="mono dim" font-size="8">Fri</text>
+    <rect x="470" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.30"/><rect x="483" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.36"/><rect x="496" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.41"/><rect x="509" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.36"/><rect x="522" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.52"/><rect x="535" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.58"/><rect x="548" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.67"/><rect x="561" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.69"/><rect x="574" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.60"/><rect x="587" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.69"/><rect x="600" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.62"/><rect x="613" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.75"/><rect x="626" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.63"/><rect x="639" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.55"/><rect x="652" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.46"/><rect x="665" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.38"/><rect x="678" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.29"/><rect x="691" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.31"/><rect x="704" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.18"/><rect x="717" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.11"/><rect x="730" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.08"/><rect x="743" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.07"/><rect x="756" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.09"/><rect x="769" y="474" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.13"/>
+    <!-- Sat -->
+    <text x="464" y="497" text-anchor="end" class="mono dim" font-size="8">Sat</text>
+    <rect x="470" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.26"/><rect x="483" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.29"/><rect x="496" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.33"/><rect x="509" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.29"/><rect x="522" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.32"/><rect x="535" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.35"/><rect x="548" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.52"/><rect x="561" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.53"/><rect x="574" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.46"/><rect x="587" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.52"/><rect x="600" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.47"/><rect x="613" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.48"/><rect x="626" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.39"/><rect x="639" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.44"/><rect x="652" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.37"/><rect x="665" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.30"/><rect x="678" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.24"/><rect x="691" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.17"/><rect x="704" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.07"/><rect x="717" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.13"/><rect x="730" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.10"/><rect x="743" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.09"/><rect x="756" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.10"/><rect x="769" y="488" width="12" height="12" rx="2" fill="#3b82f6" opacity="0.13"/>
+  </g>
+    <!-- Top Projects list -->
   <g font-size="11">
     <rect x="800" y="410" width="30" height="14" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="0.8"/>
     <text x="815" y="420" text-anchor="middle" class="accent" font-size="9" font-weight="700">main</text>
@@ -633,5 +689,5 @@
   <line x1="0" y1="700" x2="1200" y2="700" stroke="#3a332e"/>
   <circle cx="14" cy="710" r="4" fill="#4a7a35"/>
   <text x="26" y="714" class="dim" font-size="10">Connected</text>
-  <text x="1186" y="714" text-anchor="end" class="muted" font-size="10">Model: Opus 4.7 · 245 events · 1.23MB</text>
+  <text x="1186" y="714" text-anchor="end" class="muted" font-size="10">Model: Opus 4.8 · 245 events · 1.23MB</text>
 </svg>

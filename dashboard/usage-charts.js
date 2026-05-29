@@ -30,19 +30,37 @@ let toggleBound = false
 
 // ── 색상 스킴 ──────────────────────────────────────────
 const COLORS = {
-  // Daily 4-stack (입력/캐시/출력 파랑 계열)
+  // 모델 색상은 MODEL_COLORS(아래)로 이관. 여기 남은 키 중 unknown만 사용 중.
+  // (input/cacheRead/cacheWrite/project: 구 4-stack·Top Projects 잔재 — 현재 미사용)
   input: "#93c5fd",
   cacheRead: "#60a5fa",
   cacheWrite: "#3b82f6",
-  output: "#2563eb",
-  // Model 도넛 — opus 4.7=파랑, opus 4.6=와인, sonnet=녹색, haiku=노랑
-  opus: "#2563eb",
-  opusLegacy: "#8e1e3a",
-  sonnet: "#22c55e",
-  haiku: "#eab308",
   unknown: "#9ca3af",
-  // Top Projects
   project: "#3b82f6",
+}
+
+// ── 모델별 색상·라벨 (Daily 스택 막대 + Model 도넛 공용 SSOT) ──
+// 키 = normalizeModel 결과 (날짜·[1m] suffix 제거된 형태)
+// opus 4.8=보라(최신) · 4.7=파랑 · 4.6=와인(legacy) · sonnet 4.6=녹색 · haiku 4.5=노랑
+const MODEL_COLORS = {
+  "claude-opus-4-8": "#a855f7",
+  "claude-opus-4-7": "#2563eb",
+  "claude-opus-4-6": "#8e1e3a",
+  "claude-sonnet-4-6": "#22c55e",
+  "claude-haiku-4-5": "#eab308",
+}
+const MODEL_LABELS = {
+  "claude-opus-4-8": "Opus 4.8",
+  "claude-opus-4-7": "Opus 4.7",
+  "claude-opus-4-6": "Opus 4.6",
+  "claude-sonnet-4-6": "Sonnet 4.6",
+  "claude-haiku-4-5": "Haiku 4.5",
+}
+
+/** byModel 키 → 표시 라벨 ("Opus 4.8"). 미등록은 claude- 접두 제거 fallback. */
+function modelLabel(key) {
+  if (MODEL_LABELS[key]) return MODEL_LABELS[key]
+  return (key || "unknown").replace(/^claude-/, "")
 }
 
 // ── 공통 유틸 ──────────────────────────────────────────
@@ -94,10 +112,11 @@ function shortLabel(dateKey) {
   return dateKey.slice(5)
 }
 
-// ── Phase 3: Daily Usage 단일 총합 바 (분해 제거, 사용자 요청 2026-04-14) ──
+// ── Phase 3: Daily Usage 모델별 스택 바 (모델 분해, 사용자 요청 2026-05-29) ──
 /**
- * period 내 날짜별 토큰 (input + output).
+ * period 내 날짜별 × 모델별 토큰 (input + output) 스택.
  * Claude Desktop /code 와 동일 규칙 — cacheRead/cacheWrite 제외.
+ * 모델당 dataset 1개 (stacked): Opus 4.8/4.7/4.6, Sonnet 4.6, Haiku 4.5 색상 구분.
  * Day 뷰는 일 단위 데이터 특성상 시간대 분할 불가 → 최근 7일로 대체 표시.
  */
 function buildDailySeries(usageData, period) {
@@ -106,27 +125,60 @@ function buildDailySeries(usageData, period) {
   const days = enumerateDays(start, end)
   const byDate = (usageData && usageData.byDate) || {}
 
-  const totals = []
-  const costs = []
-
+  // 1) 기간 내 등장한 모델별 총 토큰 (표시 대상 + 스택 순서 결정)
+  const modelTotals = {}
   days.forEach((k) => {
     const day = byDate[k]
-    if (!day || !day.tokens) {
-      totals.push(0)
-      costs.push(0)
-      return
+    if (!day || !day.byModel) return
+    Object.keys(day.byModel).forEach((mkey) => {
+      const t = (day.byModel[mkey] && day.byModel[mkey].tokens) || {}
+      modelTotals[mkey] = (modelTotals[mkey] || 0) + (t.input || 0) + (t.output || 0)
+    })
+  })
+  // 토큰 많은 모델이 스택 바닥 → 내림차순
+  const models = Object.keys(modelTotals)
+    .filter((m) => modelTotals[m] > 0)
+    .sort((a, b) => modelTotals[b] - modelTotals[a])
+
+  // 2) 모델별 dataset (일자별 토큰) + 일자별 cost 동봉 ($segCosts — 툴팁용)
+  const datasets = models.map((mkey) => {
+    const data = []
+    const segCosts = []
+    days.forEach((k) => {
+      const m = byDate[k] && byDate[k].byModel && byDate[k].byModel[mkey]
+      const t = (m && m.tokens) || {}
+      data.push((t.input || 0) + (t.output || 0))
+      segCosts.push((m && m.costUSD) || 0)
+    })
+    return {
+      label: modelLabel(mkey),
+      data,
+      backgroundColor: modelColor(mkey),
+      $segCosts: segCosts,
+      stack: "tokens",
     }
-    const t = day.tokens
-    const sum = (t.input || 0) + (t.output || 0)
-    totals.push(sum)
-    costs.push(day.costUSD || 0)
+  })
+
+  // 3) 일자별 총합 (툴팁 footer "합계 …" 용) — byModel 합산으로 스택과 정합
+  const dayTotals = days.map((k) => {
+    const day = byDate[k]
+    let tok = 0
+    let cost = 0
+    if (day && day.byModel) {
+      Object.keys(day.byModel).forEach((mk) => {
+        const t = (day.byModel[mk] && day.byModel[mk].tokens) || {}
+        tok += (t.input || 0) + (t.output || 0)
+        cost += (day.byModel[mk] && day.byModel[mk].costUSD) || 0
+      })
+    }
+    return { tok, cost }
   })
 
   return {
     labels: days.map(shortLabel),
     rawDates: days,
-    costs,
-    datasets: [{ label: "tokens", data: totals, backgroundColor: COLORS.output }],
+    datasets,
+    dayTotals,
   }
 }
 
@@ -140,7 +192,7 @@ function renderDailyUsageChart(usageData, period) {
 
   if (dailyUsageChart) {
     dailyUsageChart.data = data
-    dailyUsageChart.$costs = series.costs
+    dailyUsageChart.$dayTotals = series.dayTotals
     dailyUsageChart.update()
     return
   }
@@ -153,15 +205,29 @@ function renderDailyUsageChart(usageData, period) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { display: false },
+        legend: {
+          display: true,
+          position: "bottom",
+          labels: { boxWidth: 12, font: { size: 11 } },
+        },
         tooltip: {
+          // 0 토큰 세그먼트는 툴팁에서 숨김
+          filter: (item) => (item.parsed.y || 0) > 0,
           callbacks: {
+            // 세그먼트별: "Opus 4.8: 1.2M · $12.34"
             label: (ctx) => {
               const v = ctx.parsed.y || 0
-              const costs = dailyUsageChart && dailyUsageChart.$costs
-              const idx = ctx.dataIndex
-              const cost = costs ? costs[idx] || 0 : 0
-              return `${formatTokens(v)} · ${formatCost(cost)}`
+              const segCosts = ctx.dataset && ctx.dataset.$segCosts
+              const cost = segCosts ? segCosts[ctx.dataIndex] || 0 : 0
+              return `${ctx.dataset.label}: ${formatTokens(v)} · ${formatCost(cost)}`
+            },
+            // 그날 전체 합계 (모델 합산)
+            footer: (items) => {
+              if (!items || !items.length) return ""
+              const totals = dailyUsageChart && dailyUsageChart.$dayTotals
+              const t = totals ? totals[items[0].dataIndex] : null
+              if (!t) return ""
+              return `합계 ${formatTokens(t.tok)} · ${formatCost(t.cost)}`
             },
           },
         },
@@ -176,19 +242,22 @@ function renderDailyUsageChart(usageData, period) {
       },
     },
   })
-  dailyUsageChart.$costs = series.costs
+  dailyUsageChart.$dayTotals = series.dayTotals
 }
 
 // ── Phase 4: Model Breakdown donut ─────────────────────
 function modelColor(name) {
+  // 1) 정규화 키 정확 매칭 (SSOT)
+  if (MODEL_COLORS[name]) return MODEL_COLORS[name]
+  // 2) 날짜/[1m] suffix가 붙은 변형 등 — 부분 문자열 fallback
   const n = (name || "").toLowerCase()
   if (n.includes("opus")) {
-    // 4.7은 새 파랑, 4.6은 와인 (구분)
-    if (n.includes("4-6") || n.includes("4.6")) return COLORS.opusLegacy
-    return COLORS.opus
+    if (n.includes("4-8") || n.includes("4.8")) return MODEL_COLORS["claude-opus-4-8"]
+    if (n.includes("4-6") || n.includes("4.6")) return MODEL_COLORS["claude-opus-4-6"]
+    return MODEL_COLORS["claude-opus-4-7"] // 그 외 opus는 파랑 기본
   }
-  if (n.includes("sonnet")) return COLORS.sonnet
-  if (n.includes("haiku")) return COLORS.haiku
+  if (n.includes("sonnet")) return MODEL_COLORS["claude-sonnet-4-6"]
+  if (n.includes("haiku")) return MODEL_COLORS["claude-haiku-4-5"]
   return COLORS.unknown
 }
 

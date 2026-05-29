@@ -1,21 +1,29 @@
 {
-  "_source": "https://www.anthropic.com/pricing (as of 2026-04-17)",
+  "_source": "https://platform.claude.com/docs/en/docs/about-claude/pricing (as of 2026-05-29)",
+  "_note": "Opus 4.5+ 단가는 $5/$25 (구 4.1 단가 $15/$75 아님). 1M 컨텍스트([1m] 변형)는 standard 단가 — normalizeModel이 [1m] suffix 제거 후 매칭.",
   "unitTokens": 1000000,
   "fallback": "claude-sonnet-4-6",
   "models": {
+    "claude-opus-4-8": {
+      "input": 5,
+      "output": 25,
+      "cacheWrite1h": 10,
+      "cacheWrite5m": 6.25,
+      "cacheRead": 0.5
+    },
     "claude-opus-4-7": {
-      "input": 15,
-      "output": 75,
-      "cacheWrite1h": 30,
-      "cacheWrite5m": 18.75,
-      "cacheRead": 1.5
+      "input": 5,
+      "output": 25,
+      "cacheWrite1h": 10,
+      "cacheWrite5m": 6.25,
+      "cacheRead": 0.5
     },
     "claude-opus-4-6": {
-      "input": 15,
-      "output": 75,
-      "cacheWrite1h": 30,
-      "cacheWrite5m": 18.75,
-      "cacheRead": 1.5
+      "input": 5,
+      "output": 25,
+      "cacheWrite1h": 10,
+      "cacheWrite5m": 6.25,
+      "cacheRead": 0.5
     },
     "claude-sonnet-4-6": {
       "input": 3,

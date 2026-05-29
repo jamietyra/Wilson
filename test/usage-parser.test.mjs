@@ -23,6 +23,15 @@ test("normalizeModel: 날짜 suffix 없으면 그대로", () => {
   assert.equal(normalizeModel("claude-opus-4-6"), "claude-opus-4-6")
 })
 
+test("normalizeModel: [1m] 변형 suffix 제거 (1M 컨텍스트는 standard 단가)", () => {
+  assert.equal(normalizeModel("claude-opus-4-8[1m]"), "claude-opus-4-8")
+  assert.equal(normalizeModel("claude-sonnet-4-6[1m]"), "claude-sonnet-4-6")
+})
+
+test("normalizeModel: [1m] + 날짜 suffix 동시 제거", () => {
+  assert.equal(normalizeModel("claude-opus-4-8-20260515[1m]"), "claude-opus-4-8")
+})
+
 // ─── parseUsageEvent ──────────────────────────────────────
 
 test("parseUsageEvent: null/undefined은 null 반환", () => {

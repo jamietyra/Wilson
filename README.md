@@ -90,7 +90,7 @@ Monitors all Claude Code sessions across sub-projects simultaneously.
 A second page at `/usage` gives you long-term visibility into Claude's token and dollar usage.
 
 <p align="center">
-  <img src="preview.usage.svg?v=1" alt="monitor-usage dashboard preview" width="100%">
+  <img src="preview.usage.svg?v=2" alt="monitor-usage dashboard preview" width="100%">
 </p>
 
 Click the **`monitor-agent`** title in the header to switch to `monitor-usage`; click **`monitor-usage`** to go back.
@@ -98,13 +98,13 @@ Click the **`monitor-agent`** title in the header to switch to `monitor-usage`; 
 #### What you can see
 
 - **5 metric cards** — Cost / Tokens / Active Time / Sessions / Prompts.
-- **Charts** — Daily Usage bar, Model Breakdown donut (Opus blue / Sonnet green / Haiku yellow), Top Projects list.
+- **Charts** — Daily Usage bar **stacked by model** (Opus 4.8 purple / Opus 4.7 blue / Opus 4.6 wine / Sonnet 4.6 green / Haiku 4.5 yellow; hover a bar for per-model tokens & cost plus the day total), Model Breakdown donut, Top Projects list.
 - **Month Grid** calendar — per-day tokens and cost, click a cell for the day drill-down modal.
 - **Sessions tree** (left, below Wilson) — 2-level tree per project tag, labeled `[MM/DD | first prompt summary]`, with inline subagent breakdown.
 
 #### Accuracy note
 
-Token cost is computed from Anthropic's public API rates (Opus 4.7 $15/$75 per M, Sonnet 4.6 $3/$15, Haiku 4.5 $1/$5) with proper cache-write/cache-read adjustments and per-event model resolution. **If you're on a Claude subscription plan this number is a theoretical "what-if" for pay-as-you-go API** — use it as a usage-intensity proxy, not an invoice.
+Token cost is computed from Anthropic's public API rates (Opus 4.8 / 4.7 / 4.6 $5/$25 per M input/output, Sonnet 4.6 $3/$15, Haiku 4.5 $1/$5) with proper cache-write/cache-read adjustments and per-event model resolution. The 1M-context variant (`[1m]`) is billed at the same standard rate, so it's merged into its base model. **If you're on a Claude subscription plan this number is a theoretical "what-if" for pay-as-you-go API** — use it as a usage-intensity proxy, not an invoice.
 
 ---
 
