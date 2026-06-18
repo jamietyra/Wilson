@@ -98,13 +98,13 @@ Click the **`monitor-agent`** title in the header to switch to `monitor-usage`; 
 #### What you can see
 
 - **5 metric cards** — Cost / Tokens / Active Time / Sessions / Prompts.
-- **Charts** — Daily Usage bar **stacked by model** (Opus 4.8 purple / Opus 4.7 blue / Opus 4.6 wine / Sonnet 4.6 green / Haiku 4.5 yellow; hover a bar for per-model tokens & cost plus the day total), Model Breakdown donut, Top Projects list.
+- **Charts** — Daily Usage bar, color-stacked by model (hover a bar for per-model tokens & cost plus the day total), Model Breakdown donut, Top Projects list.
 - **Month Grid** calendar — per-day tokens and cost, click a cell for the day drill-down modal.
 - **Sessions tree** (left, below Wilson) — 2-level tree per project tag, labeled `[MM/DD | first prompt summary]`, with inline subagent breakdown.
 
 #### Accuracy note
 
-Token cost is computed from Anthropic's public API rates (Opus 4.8 / 4.7 / 4.6 $5/$25 per M input/output, Sonnet 4.6 $3/$15, Haiku 4.5 $1/$5) with proper cache-write/cache-read adjustments and per-event model resolution. The 1M-context variant (`[1m]`) is billed at the same standard rate, so it's merged into its base model. **If you're on a Claude subscription plan this number is a theoretical "what-if" for pay-as-you-go API** — use it as a usage-intensity proxy, not an invoice.
+Token cost is computed from Anthropic's public API rates with proper cache-write/cache-read adjustments and per-event model resolution. **If you're on a Claude subscription plan this number is a theoretical "what-if" for pay-as-you-go API** — use it as a usage-intensity proxy, not an invoice.
 
 ---
 
@@ -116,7 +116,7 @@ cd Wilson
 node server.mjs
 ```
 
-Then open **http://localhost:3141** in your browser. (Port `3141` — from π.)
+Then open **http://localhost:3141** in your browser.
 
 ### IDE Tips
 
@@ -220,7 +220,7 @@ Without `MONITOR_REMOTE=true`, the server only accepts connections from localhos
 - **Authentication** — Token via Bearer header (preferred) or query string (deprecated).
 - **Path traversal** — `/api/file` enforces absolute paths resolved via `realpath`, rejected if outside `MONITOR_ALLOWED_PATHS`.
 - **CORS** — Origins outside the whitelist receive no `Access-Control-Allow-Origin` header; browsers block cross-origin reads naturally.
-- **CSRF** — Not applicable: all HTTP endpoints are read-only. If future versions add state-changing endpoints, each must require an `X-CSRF-Token` header (double-submit cookie pattern).
+- **CSRF** — Not applicable: all HTTP endpoints are read-only.
 
 ---
 

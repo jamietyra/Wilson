@@ -98,13 +98,13 @@ Wilson 바로 아래, 최근 10분간의 모든 tool 호출을 컬러 아이콘�
 #### 주요 내용
 
 - **5개 지표 카드** — 비용 / 토큰 / 활성 시간 / 세션 / 프롬프트.
-- **차트** — 일일 사용량 **모델별 스택 막대**(Opus 4.8 보라 / Opus 4.7 파랑 / Opus 4.6 와인 / Sonnet 4.6 녹색 / Haiku 4.5 노랑; 막대에 마우스를 올리면 모델별 토큰·비용 + 그날 합계), 모델 분포 도넛, Top Projects 리스트.
+- **차트** — 일일 사용량 막대를 모델별 색으로 스택(막대에 마우스를 올리면 모델별 토큰·비용 + 그날 합계), 모델 분포 도넛, Top Projects 리스트.
 - **Month Grid 달력** — 각 날짜 토큰/비용, 셀 클릭 시 일간 상세 모달.
 - **세션 트리** (왼쪽, Wilson 아래) — 프로젝트 태그별 2-level 트리, 레이블 `[MM/DD | 첫 프롬프트 요약]`, 서브에이전트 인라인.
 
 #### 비용 정확도 참고
 
-Anthropic 공개 API 단가(Opus 4.8 / 4.7 / 4.6 입력·출력 $5/$25 per M, Sonnet 4.6 $3/$15, Haiku 4.5 $1/$5)에 캐시 읽기/쓰기·모델별 단가를 정확히 적용해 이벤트 단위로 계산합니다. 1M 컨텍스트 변형(`[1m]`)은 standard 단가로 과금되므로 기본 모델에 합산됩니다. **Claude 구독제를 쓰면 이 숫자는 "API로 썼다면 얼마일까" 가상값**이라 실제 청구액이 아닙니다. 사용 강도 지표로 해석하세요.
+Anthropic 공개 API 단가에 캐시 읽기/쓰기·모델별 단가를 정확히 적용해 이벤트 단위로 계산합니다. **Claude 구독제를 쓰면 이 숫자는 "API로 썼다면 얼마일까" 가상값**이라 실제 청구액이 아닙니다. 사용 강도 지표로 해석하세요.
 
 ---
 
@@ -116,7 +116,7 @@ cd Wilson
 node server.mjs
 ```
 
-브라우저에서 **http://localhost:3141** 을 열면 됩니다. (포트는 π에서 따온 `3141`)
+브라우저에서 **http://localhost:3141** 을 열면 됩니다.
 
 ### IDE 팁
 
@@ -220,7 +220,7 @@ curl -H "Authorization: Bearer your-secret-token" http://서버IP:3141/api/usage
 - **인증** — Bearer 헤더(권장) 또는 쿼리 스트링(deprecated).
 - **Path traversal** — `/api/file`은 절대 경로를 `realpath`로 정규화하고 `MONITOR_ALLOWED_PATHS` 밖이면 거부.
 - **CORS** — 화이트리스트 밖 origin에는 `Access-Control-Allow-Origin` 헤더를 내지 않음. 브라우저가 크로스 origin 읽기를 자연히 차단.
-- **CSRF** — 해당 없음: 모든 HTTP 엔드포인트가 read-only. 향후 상태 변경 엔드포인트가 추가되면 각각 `X-CSRF-Token` 헤더(double-submit cookie 패턴)를 요구해야 함.
+- **CSRF** — 해당 없음: 모든 HTTP 엔드포인트가 read-only.
 
 ---
 
