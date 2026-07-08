@@ -1,8 +1,8 @@
 /* ─── monitor-usage 페이지 차트 모듈 (Phase 3+4) ─────────
  * 역할:
- *   1) Daily Usage 4-stack bar (input/cacheRead/cacheWrite/output)
- *   2) Model Breakdown donut (tokens/cost 토글)
- *   3) Top Projects horizontal bar (상위 5개, 토큰 기준)
+ *   1) Daily Usage bar (모델별 색상 스택)
+ *   2) Top Projects horizontal bar (상위 5개, 토큰 기준)
+ *   3) Hourly Activity heatmap (요일 × 시간)
  *
  * 원칙:
  *   - Chart.js 4.4.1 UMD (CDN) 사용. 미로드 시 silent return + 경고.
@@ -11,22 +11,17 @@
  *
  * 공개 API: window.usageCharts.*
  *   - renderDailyUsageChart(usageData, period)
- *   - renderModelBreakdown(usageData, period, mode?)
  *   - renderTopProjects(usageData, period)
+ *   - renderHourlyHeatmap(usageData, period)
  *   - renderAll(usageData, period)
- *   - currentMode (getter/setter — Model Breakdown 토글 상태)
  */
 
 // usage-charts.js — monitor-usage 차트 (ES Module)
 
 // ── 모듈 상태 ──────────────────────────────────────────
 let dailyUsageChart = null
-let modelBreakdownChart = null
 let topProjectsChart = null
-let currentMode = "tokens" // 'tokens' | 'cost' (Model Breakdown 토글)
-let lastUsageData = null
 let lastPeriod = "month"
-let toggleBound = false
 
 // ── 색상 스킴 ──────────────────────────────────────────
 const COLORS = {
@@ -245,7 +240,7 @@ function renderDailyUsageChart(usageData, period) {
   dailyUsageChart.$dayTotals = series.dayTotals
 }
 
-// ── Phase 4: Model Breakdown donut ─────────────────────
+// ── 모델 색상 헬퍼 (Daily 스택 바 공용) ─────────────────
 function modelColor(name) {
   // 1) 정규화 키 정확 매칭 (SSOT)
   if (MODEL_COLORS[name]) return MODEL_COLORS[name]
@@ -259,111 +254,6 @@ function modelColor(name) {
   if (n.includes("sonnet")) return MODEL_COLORS["claude-sonnet-4-6"]
   if (n.includes("haiku")) return MODEL_COLORS["claude-haiku-4-5"]
   return COLORS.unknown
-}
-
-function buildModelSeries(usageData, period, mode) {
-  // Day 포함 — period 그대로 (기간 내 모든 byDate 순회)
-  const [start, end] = period === "day" ? [new Date(), new Date()] : rangeForPeriod(period)
-  const startKey = isoDate(start)
-  const endKey = isoDate(end)
-  const byDate = (usageData && usageData.byDate) || {}
-
-  const agg = {} // modelKey → {tokens, cost}
-  Object.keys(byDate).forEach((k) => {
-    if (k < startKey || k > endKey) return
-    const day = byDate[k]
-    if (!day || !day.byModel) return
-    Object.keys(day.byModel).forEach((mkey) => {
-      const m = day.byModel[mkey]
-      if (!m) return
-      if (!agg[mkey]) agg[mkey] = { tokens: 0, cost: 0 }
-      const t = m.tokens || {}
-      // input + output 만 집계 (Claude Desktop /code 규칙)
-      agg[mkey].tokens += (t.input || 0) + (t.output || 0)
-      agg[mkey].cost += m.costUSD || 0
-    })
-  })
-
-  // 정렬 (현재 모드 기준 내림차순)
-  const entries = Object.entries(agg)
-    .map(([name, v]) => ({ name, tokens: v.tokens, cost: v.cost }))
-    .filter((e) => (mode === "cost" ? e.cost > 0 : e.tokens > 0))
-    .sort((a, b) => (mode === "cost" ? b.cost - a.cost : b.tokens - a.tokens))
-
-  return {
-    labels: entries.map((e) => e.name),
-    data: entries.map((e) => (mode === "cost" ? e.cost : e.tokens)),
-    colors: entries.map((e) => modelColor(e.name)),
-    raw: entries,
-  }
-}
-
-function renderModelBreakdown(usageData, period, mode) {
-  if (!hasChart()) return
-  if (mode) currentMode = mode
-  const canvas = document.querySelector("#model-breakdown-chart canvas")
-  if (!canvas) return
-
-  // 토글 버튼 active 클래스 동기화
-  const panel = document.getElementById("model-breakdown-chart")
-  if (panel) {
-    panel.querySelectorAll(".chart-mode-btn").forEach((btn) => {
-      if (btn.dataset.mode === currentMode) btn.classList.add("active")
-      else btn.classList.remove("active")
-    })
-  }
-
-  const series = buildModelSeries(usageData, period, currentMode)
-  const total = series.data.reduce((a, b) => a + b, 0)
-
-  const data = {
-    labels: series.labels,
-    datasets: [
-      {
-        data: series.data,
-        backgroundColor: series.colors,
-        borderWidth: 0,
-      },
-    ],
-  }
-
-  if (modelBreakdownChart) {
-    modelBreakdownChart.data = data
-    modelBreakdownChart.$mode = currentMode
-    modelBreakdownChart.$total = total
-    modelBreakdownChart.update()
-    return
-  }
-
-  const ctx = canvas.getContext("2d")
-  modelBreakdownChart = new window.Chart(ctx, {
-    type: "doughnut",
-    data,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: "55%",
-      plugins: {
-        legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 11 } } },
-        tooltip: {
-          callbacks: {
-            // "opus-4-6: 123K tokens (32%)" 또는 "opus-4-6: $1.23 (32%)"
-            label: (ctx) => {
-              const label = ctx.label
-              const v = ctx.parsed || 0
-              const tot = modelBreakdownChart && modelBreakdownChart.$total
-              const pct = tot > 0 ? Math.round((v / tot) * 100) : 0
-              const mode = (modelBreakdownChart && modelBreakdownChart.$mode) || "tokens"
-              const body = mode === "cost" ? formatCost(v) : formatTokens(v) + " tokens"
-              return `${label}: ${body} (${pct}%)`
-            },
-          },
-        },
-      },
-    },
-  })
-  modelBreakdownChart.$mode = currentMode
-  modelBreakdownChart.$total = total
 }
 
 // ── Phase 4: Top Projects horizontal bar ───────────────
@@ -461,25 +351,6 @@ function renderTopProjects(usageData, period) {
   body.innerHTML = html
 }
 
-// ── Model Breakdown 토글 클릭 핸들러 (1회만 바인딩) ──
-function bindModelToggle() {
-  if (toggleBound) return
-  const panel = document.getElementById("model-breakdown-chart")
-  if (!panel) return
-  const btns = panel.querySelectorAll(".chart-mode-btn")
-  if (!btns.length) return
-  btns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const mode = btn.dataset.mode
-      if (!mode || mode === currentMode) return
-      currentMode = mode
-      // 최신 데이터로 재렌더
-      renderModelBreakdown(lastUsageData, lastPeriod, mode)
-    })
-  })
-  toggleBound = true
-}
-
 // ── Hourly Heatmap (요일 × 시간) — #32 ──────────────────
 // byHour 는 UTC 기준. matrix[weekday(0=Sun..6=Sat)][hour(0..23)] = tokens 누적.
 function sumTokenObj(tokens) {
@@ -548,11 +419,8 @@ function renderHourlyHeatmap(usageData, period) {
 // ── 일괄 렌더 ──────────────────────────────────────────
 function renderAll(usageData, period) {
   if (!usageData) return
-  lastUsageData = usageData
   lastPeriod = period || "month"
-  bindModelToggle()
   renderDailyUsageChart(usageData, lastPeriod)
-  renderModelBreakdown(usageData, lastPeriod, currentMode)
   renderTopProjects(usageData, lastPeriod)
   renderHourlyHeatmap(usageData, lastPeriod)
 }
@@ -560,15 +428,8 @@ function renderAll(usageData, period) {
 // ── 전역 API 노출 ──────────────────────────────────────
 export const usageCharts = {
   renderDailyUsageChart,
-  renderModelBreakdown,
   renderTopProjects,
   renderHourlyHeatmap,
   renderAll,
-  get currentMode() {
-    return currentMode
-  },
-  set currentMode(v) {
-    currentMode = v
-  },
 }
 if (typeof window !== "undefined") window.usageCharts = usageCharts
