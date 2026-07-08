@@ -98,7 +98,7 @@ Wilson 바로 아래, 최근 10분간의 모든 tool 호출을 컬러 아이콘�
 #### 주요 내용
 
 - **5개 지표 카드** — 비용 / 토큰 / 활성 시간 / 세션 / 프롬프트.
-- **차트** — 일일 사용량 막대를 모델별 색으로 스택(막대에 마우스를 올리면 모델별 토큰·비용 + 그날 합계), 모델 분포 도넛, Top Projects 리스트.
+- **차트** — 일일 사용량 막대를 모델별 색으로 스택(막대에 마우스를 올리면 모델별 토큰·비용 + 그날 합계), Hourly Activity 히트맵(요일 × 시간대별 토큰, UTC), Top Projects 리스트.
 - **Month Grid 달력** — 각 날짜 토큰/비용, 셀 클릭 시 일간 상세 모달.
 - **세션 트리** (왼쪽, Wilson 아래) — 프로젝트 태그별 2-level 트리, 레이블 `[MM/DD | 첫 프롬프트 요약]`, 서브에이전트 인라인.
 
@@ -161,7 +161,7 @@ Claude Code → transcript.jsonl → wilson (server.mjs)
                                                          │
                                                          └─► GET /api/usage ─► /usage 페이지
                                                                               ├─► 지표 카드
-                                                                              ├─► Daily / Model / Projects
+                                                                              ├─► Daily / Hourly / Projects
                                                                               ├─► Month Grid 달력
                                                                               └─► 세션 트리
 ```

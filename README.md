@@ -98,7 +98,7 @@ Click the **`monitor-agent`** title in the header to switch to `monitor-usage`; 
 #### What you can see
 
 - **5 metric cards** — Cost / Tokens / Active Time / Sessions / Prompts.
-- **Charts** — Daily Usage bar, color-stacked by model (hover a bar for per-model tokens & cost plus the day total), Model Breakdown donut, Top Projects list.
+- **Charts** — Daily Usage bar, color-stacked by model (hover a bar for per-model tokens & cost plus the day total), Hourly Activity heatmap (tokens by weekday × hour, UTC), Top Projects list.
 - **Month Grid** calendar — per-day tokens and cost, click a cell for the day drill-down modal.
 - **Sessions tree** (left, below Wilson) — 2-level tree per project tag, labeled `[MM/DD | first prompt summary]`, with inline subagent breakdown.
 
@@ -161,7 +161,7 @@ Claude Code → transcript.jsonl → wilson (server.mjs)
                                                          │
                                                          └─► GET /api/usage ─► /usage page
                                                                               ├─► Metric Cards
-                                                                              ├─► Daily / Model / Projects
+                                                                              ├─► Daily / Hourly / Projects
                                                                               ├─► Month Grid calendar
                                                                               └─► Sessions tree
 ```
