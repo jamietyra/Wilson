@@ -260,6 +260,48 @@ main {
   padding: 2px 0;
   contain: layout style;
 }
+
+/* ─── 하단: 서브에이전트 · 시스템 주입 프롬프트 ─── */
+.activity-sub {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 60%; /* 펼쳐도 메인 목록을 다 먹지 않게 */
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.activity-sub-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  background: var(--bg-panel);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-align: left;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.activity-sub-head:hover {
+  background: var(--bg-hover);
+}
+.activity-sub-caret {
+  color: var(--accent);
+  transition: transform var(--duration-fast);
+}
+.activity-sub-head.open .activity-sub-caret {
+  transform: rotate(90deg);
+}
+.activity-sub-list {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.activity-sub-list.collapsed {
+  display: none;
+}
 .load-more-btn {
   display: block;
   width: 100%;

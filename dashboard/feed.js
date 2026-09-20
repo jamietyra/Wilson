@@ -1,7 +1,36 @@
 // feed.js — 실시간 이벤트 피드 (ES Module)
 
 var activityList = document.getElementById("activity-list")
+var activitySubList = document.getElementById("activity-sub-list")
+var activitySubHead = document.getElementById("activity-sub-toggle")
+var activitySubCount = document.getElementById("activity-sub-count")
 var sessionFiltersEl = document.getElementById("session-filters")
+
+// 메인 목록 = 사용자가 직접 입력한 프롬프트 그룹.
+// 하단 목록 = 서브에이전트 프롬프트 + 시스템이 주입한 프롬프트 (fromUser === false).
+function isSideFeed(ev) {
+  if (!ev) return false
+  if (ev.isSubagent) return true
+  return ev.type === "prompt" && ev.fromUser === false
+}
+
+function allPromptGroups() {
+  var main = Array.prototype.slice.call(activityList.querySelectorAll(".prompt-group"))
+  var sub = Array.prototype.slice.call(activitySubList.querySelectorAll(".prompt-group"))
+  return main.concat(sub)
+}
+
+function updateSubCount() {
+  if (!activitySubCount) return
+  activitySubCount.textContent = activitySubList.querySelectorAll(".prompt-group").length
+}
+
+if (activitySubHead) {
+  activitySubHead.onclick = () => {
+    var open = activitySubHead.classList.toggle("open")
+    activitySubList.classList.toggle("collapsed", !open)
+  }
+}
 var knownSessions = new Set()
 var activeSessionFilter = null // null = 전체
 
@@ -45,7 +74,7 @@ var toggleAllBtn = document.getElementById("toggle-all")
 toggleAllBtn.onclick = () => {
   allExpanded = !allExpanded
   toggleAllBtn.textContent = allExpanded ? "▼ All" : "▶ All"
-  var groups = activityList.querySelectorAll(".prompt-group")
+  var groups = allPromptGroups()
   for (var i = 0; i < groups.length; i++) {
     var toggle = groups[i].querySelector(".prompt-toggle")
     var tools = groups[i].querySelector(".prompt-tools")
@@ -68,7 +97,7 @@ searchInput.addEventListener("input", () => {
 
 function applyFilters() {
   var q = searchInput.value.toLowerCase().trim()
-  var groups = activityList.querySelectorAll(".prompt-group")
+  var groups = allPromptGroups()
   for (var i = 0; i < groups.length; i++) {
     var group = groups[i]
     var show = true
@@ -162,7 +191,13 @@ var MAX_FEED_GROUPS = window.wilsonConfig?.MAX_FEED_GROUPS || 500 // #5 virtuali
 
 // #5 — DOM 상한 초과 시 가장 오래된 그룹부터 FIFO 제거 (toolItemMap/sessionStates/close timer 정리)
 function enforceGroupCap() {
-  var groups = activityList.querySelectorAll(".prompt-group")
+  capList(activityList)
+  capList(activitySubList)
+  updateSubCount()
+}
+
+function capList(list) {
+  var groups = list.querySelectorAll(".prompt-group")
   if (groups.length <= MAX_FEED_GROUPS) return
   var toRemove = groups.length - MAX_FEED_GROUPS
   for (var i = 0; i < toRemove; i++) {
@@ -315,16 +350,22 @@ function createGroup(timeStr, text, promptId, ev) {
 
   group.appendChild(header)
   group.appendChild(tools)
-  activityList.appendChild(group)
+  var side = isSideFeed(ev)
+  ;(side ? activitySubList : activityList).appendChild(group)
   enforceGroupCap() // #5 — 신규 그룹 추가 후 상한 체크
 
   // 실시간 prompt 이벤트는 펼친 상태로 시작 (활동이 보이도록).
   // batch loading (새로고침/초기 init) 중에는 모든 그룹을 접힌 상태로.
   // (previous) 등 fallback 그룹도 접힌 상태로.
-  if (isBatchLoading || !ev || ev.type !== "prompt") {
+  if (isBatchLoading || !ev || ev.type !== "prompt" || side) {
     header.querySelector(".prompt-toggle").classList.add("collapsed")
     tools.classList.add("collapsed")
   }
+
+  // 시스템이 주입한 프롬프트 그룹은 세션의 활성 그룹으로 삼지 않는다
+  // → 이후 도구 활동은 직전 사용자 프롬프트 그룹에 계속 붙는다.
+  // (서브에이전트는 자기 SUB: 키를 쓰므로 메인 세션과 섞이지 않아 예외)
+  if (side && !ev?.isSubagent) return
 
   var s = getSessionState(key)
   s.group = group
@@ -338,7 +379,8 @@ function ensurePromptGroup(ev) {
     var previewText = ev.text.replace(/\n/g, " ").slice(0, 160) || "(prompt)"
     createGroup(timeStr, previewText, ev.promptId, ev)
     // 새 prompt — isNearBottom 조건 무시하고 즉시 하단으로 강제 스크롤
-    activityList.scrollTop = activityList.scrollHeight
+    var list = isSideFeed(ev) ? activitySubList : activityList
+    list.scrollTop = list.scrollHeight
     return
   }
 
@@ -369,10 +411,11 @@ function notifyGroupActivity(s, ev) {
   }
 }
 
-function autoScroll() {
-  var isNearBottom =
-    activityList.scrollHeight - activityList.scrollTop - activityList.clientHeight < 80
-  if (isNearBottom) activityList.scrollTop = activityList.scrollHeight
+// container가 하단 목록 안이면 하단 목록을, 아니면 메인 목록을 따라 내린다
+function autoScroll(container) {
+  var list = container && activitySubList.contains(container) ? activitySubList : activityList
+  var isNearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 80
+  if (isNearBottom) list.scrollTop = list.scrollHeight
 }
 
 function escapeHtml(str) {
@@ -416,7 +459,7 @@ function addActivityItem(ev) {
     var sAt = getSessionState(getSessionKey(ev))
     sAt.toolsContainer.appendChild(item)
     notifyGroupActivity(sAt, ev)
-    autoScroll()
+    autoScroll(sAt.toolsContainer)
     return
   }
 
@@ -548,30 +591,45 @@ function addActivityItem(ev) {
   s.toolCount++
   updateGroupCount(ev)
   notifyGroupActivity(s, ev)
-  autoScroll()
+  autoScroll(s.toolsContainer)
 }
 
 // 이전 이벤트를 특정 위치 앞에 삽입 (Load more용)
-var prevGroup = null
-var prevToolsContainer = null
-var prevToolCount = 0
+// 커서는 메인/하단 목록별로 따로 둔다 — 하단 그룹이 메인 흐름의 도구 활동을 가로채지 않게.
+var prevCursor = {
+  main: { group: null, tools: null, count: 0 },
+  side: { group: null, tools: null, count: 0 },
+}
 
 function addActivityItemBefore(ev, beforeEl) {
+  var side = isSideFeed(ev)
+  var cur = prevCursor[side ? "side" : "main"]
+
   if (ev.type === "prompt") {
     var sessionName = ev.project || "IT"
     addSessionFilterBtn(sessionName)
     var group = document.createElement("div")
     group.className = "prompt-group"
+    if (ev.isSubagent) group.classList.add("subagent-group")
     group.dataset.session = sessionName
     if (ev.promptId) group.dataset.promptId = ev.promptId
+    if (ev.agentId) group.dataset.agentId = ev.agentId
     var header = document.createElement("div")
     header.className = "prompt-header"
     var timeStr = ev.time ? formatTime(ev.time) : ""
     var fullPromptText = ev.text || ""
     var previewText = fullPromptText.replace(/\n/g, " ").slice(0, 160) || "(prompt)"
+    var subBadge = ev.isSubagent
+      ? '<span class="sub-badge" title="' +
+        escapeHtml(ev.agentDescription || "") +
+        '">SUB: ' +
+        escapeHtml(ev.agentType || "Agent") +
+        "</span>"
+      : ""
     header.innerHTML = [
       '<span class="prompt-toggle collapsed">▼</span>',
       makeSessionTag(ev.project),
+      subBadge,
       `<span class="prompt-time">${timeStr}</span>`,
       '<span class="prompt-text" data-tooltip="' +
         escapeHtml(fullPromptText) +
@@ -589,20 +647,26 @@ function addActivityItemBefore(ev, beforeEl) {
     }
     group.appendChild(header)
     group.appendChild(tools)
-    activityList.insertBefore(group, beforeEl)
-    prevGroup = group
-    prevToolsContainer = tools
-    prevToolCount = 0
+    if (side) {
+      // 하단 목록은 스크롤이 분리돼 beforeEl 기준이 없다 — 맨 위에 prepend
+      activitySubList.insertBefore(group, activitySubList.firstChild)
+      updateSubCount()
+    } else {
+      activityList.insertBefore(group, beforeEl)
+    }
+    cur.group = group
+    cur.tools = tools
+    cur.count = 0
     return
   }
 
   if (ev.type === "assistant_text") {
-    if (!prevToolsContainer) return
+    if (!cur.tools) return
     var aItem = document.createElement("div")
     aItem.className = "assistant-text-item"
     var aFull = ev.text || ""
     aItem.innerHTML =
-      '<span class="assistant-icon">\u25CF</span><span class="assistant-text" data-tooltip="' +
+      '<span class="assistant-icon">●</span><span class="assistant-text" data-tooltip="' +
       escapeHtml(aFull) +
       '">' +
       escapeHtml(aFull) +
@@ -613,7 +677,7 @@ function addActivityItemBefore(ev, beforeEl) {
       window.displayCode._clickedEl = this
       if (window.displayOutput) window.displayOutput(this._outputData)
     }
-    prevToolsContainer.appendChild(aItem)
+    cur.tools.appendChild(aItem)
     return
   }
 
@@ -622,10 +686,10 @@ function addActivityItemBefore(ev, beforeEl) {
     if (existing) {
       var iconEl = existing.querySelector(".activity-icon")
       if (ev.type === "tool_done") {
-        iconEl.textContent = "\u2713"
+        iconEl.textContent = "✓"
         iconEl.className = "activity-icon icon-done"
       } else {
-        iconEl.textContent = "\u2717"
+        iconEl.textContent = "✗"
         iconEl.className = "activity-icon icon-error"
         existing.classList.add("error-item")
       }
@@ -640,9 +704,18 @@ function addActivityItemBefore(ev, beforeEl) {
   }
 
   if (ev.type !== "tool_start") return
-  if (!prevGroup) {
+  if (!cur.group) {
     addActivityItemBefore(
-      { type: "prompt", text: "(previous)", project: ev.project, time: ev.time },
+      {
+        type: "prompt",
+        text: "(previous)",
+        project: ev.project,
+        time: ev.time,
+        isSubagent: ev.isSubagent,
+        agentId: ev.agentId,
+        agentType: ev.agentType,
+        agentDescription: ev.agentDescription,
+      },
       beforeEl,
     )
   }
@@ -679,7 +752,7 @@ function addActivityItemBefore(ev, beforeEl) {
   var target = ev.target || ""
   item.innerHTML = [
     `<span class="activity-time">${timeStr}</span>`,
-    '<span class="activity-icon icon-start">\u25b6</span>',
+    '<span class="activity-icon icon-start">▶</span>',
     `<span class="activity-name">${escapeHtml(ev.name)}</span>`,
     '<span class="activity-target" data-tooltip="' +
       escapeHtml(target) +
@@ -703,10 +776,10 @@ function addActivityItemBefore(ev, beforeEl) {
       if (window.displayOutput) window.displayOutput(this._outputData)
     }
   }
-  prevToolsContainer.appendChild(item)
-  prevToolCount++
-  var countEl = prevGroup.querySelector(".prompt-count")
-  if (countEl) countEl.textContent = prevToolCount
+  cur.tools.appendChild(item)
+  cur.count++
+  var countEl = cur.group.querySelector(".prompt-count")
+  if (countEl) countEl.textContent = cur.count
 }
 
 // 공용 툴팁 모듈 (tooltip.js)에 활동 리스트 바인딩 — 느린 지연 1500ms

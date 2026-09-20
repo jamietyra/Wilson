@@ -36,18 +36,29 @@ const COLORS = {
 
 // ── 모델별 색상·라벨 (Daily 스택 막대 + Model 도넛 공용 SSOT) ──
 // 키 = normalizeModel 결과 (날짜·[1m] suffix 제거된 형태)
-// opus 4.8=보라(최신) · 4.7=파랑 · 4.6=와인(legacy) · sonnet 4.6=녹색 · haiku 4.5=노랑
+// fable=분홍 · opus 5=진보라(최신) · 4.8=보라 · 4.7=파랑 · 4.6/4.5=와인(legacy)
+// sonnet 5=청록 · 4.6=녹색 · haiku 4.5=노랑
 const MODEL_COLORS = {
+  "claude-fable-5-1": "#f472b6",
+  "claude-fable-5": "#db2777",
+  "claude-opus-5": "#7c3aed",
   "claude-opus-4-8": "#a855f7",
   "claude-opus-4-7": "#2563eb",
   "claude-opus-4-6": "#8e1e3a",
+  "claude-opus-4-5": "#6b1229",
+  "claude-sonnet-5": "#14b8a6",
   "claude-sonnet-4-6": "#22c55e",
   "claude-haiku-4-5": "#eab308",
 }
 const MODEL_LABELS = {
+  "claude-fable-5-1": "Fable 5.1",
+  "claude-fable-5": "Fable 5",
+  "claude-opus-5": "Opus 5",
   "claude-opus-4-8": "Opus 4.8",
   "claude-opus-4-7": "Opus 4.7",
   "claude-opus-4-6": "Opus 4.6",
+  "claude-opus-4-5": "Opus 4.5",
+  "claude-sonnet-5": "Sonnet 5",
   "claude-sonnet-4-6": "Sonnet 4.6",
   "claude-haiku-4-5": "Haiku 4.5",
 }
@@ -246,12 +257,18 @@ function modelColor(name) {
   if (MODEL_COLORS[name]) return MODEL_COLORS[name]
   // 2) 날짜/[1m] suffix가 붙은 변형 등 — 부분 문자열 fallback
   const n = (name || "").toLowerCase()
+  if (n.includes("fable") || n.includes("mythos")) return MODEL_COLORS["claude-fable-5-1"]
   if (n.includes("opus")) {
     if (n.includes("4-8") || n.includes("4.8")) return MODEL_COLORS["claude-opus-4-8"]
+    if (n.includes("4-7") || n.includes("4.7")) return MODEL_COLORS["claude-opus-4-7"]
     if (n.includes("4-6") || n.includes("4.6")) return MODEL_COLORS["claude-opus-4-6"]
-    return MODEL_COLORS["claude-opus-4-7"] // 그 외 opus는 파랑 기본
+    if (n.includes("4-5") || n.includes("4.5")) return MODEL_COLORS["claude-opus-4-5"]
+    return MODEL_COLORS["claude-opus-5"] // 그 외 opus는 최신(Opus 5) 색
   }
-  if (n.includes("sonnet")) return MODEL_COLORS["claude-sonnet-4-6"]
+  if (n.includes("sonnet")) {
+    if (n.includes("4-6") || n.includes("4.6")) return MODEL_COLORS["claude-sonnet-4-6"]
+    return MODEL_COLORS["claude-sonnet-5"]
+  }
   if (n.includes("haiku")) return MODEL_COLORS["claude-haiku-4-5"]
   return COLORS.unknown
 }

@@ -356,6 +356,10 @@ function parseFileOpFromMcp(toolName, input) {
   return null
 }
 
+// 다른 Claude 세션/피어가 보낸 메시지에 하네스가 붙이는 봉투 문구.
+// 구버전 transcript에는 origin 필드가 없어서 본문이 유일한 단서다.
+const PEER_MESSAGE_RE = /^Another Claude session sent a message\b/
+
 function processEntry(entry, state) {
   const timestamp = entry.timestamp ? new Date(entry.timestamp) : new Date()
   const events = []
@@ -377,11 +381,18 @@ function processEntry(entry, state) {
     // 시스템 메시지 제외
     if (text && !text.startsWith("<") && text.trim().length > 0) {
       state.promptId = (state.promptId || 0) + 1
+      // 사용자가 직접 입력한 프롬프트인지 — origin.kind === "human" 이 SOT.
+      // origin 필드가 없는 구버전 transcript는 isMeta 아니고 피어 메시지도 아닌 것을 사용자 입력으로 간주.
+      const fromUser =
+        !entry.isMeta &&
+        !PEER_MESSAGE_RE.test(text) &&
+        (!entry.origin || entry.origin.kind === "human")
       events.push({
         type: "prompt",
         text: text.slice(0, 5000),
         time: timestamp.toISOString(),
         promptId: state.promptId,
+        fromUser,
       })
     }
   }

@@ -81,6 +81,15 @@
         <div class="fold-divider"></div>
       </div>
       <div class="activity-list" id="activity-list"></div>
+      <!-- 사용자가 직접 입력하지 않은 프롬프트(서브에이전트·시스템 주입) — 기본 접힘 -->
+      <div class="activity-sub">
+        <button type="button" class="activity-sub-head" id="activity-sub-toggle">
+          <span class="activity-sub-caret">▶</span>
+          <span>Agent &amp; system prompts</span>
+          <span class="prompt-count" id="activity-sub-count">0</span>
+        </button>
+        <div class="activity-list activity-sub-list collapsed" id="activity-sub-list"></div>
+      </div>
     </div>
 
     <div class="resize-handle" id="resize-activity"></div>

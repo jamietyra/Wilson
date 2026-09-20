@@ -35,13 +35,14 @@ var connectionStatus = document.getElementById("connection-status")
   })
 })()
 
-// 모델 이름 정규화: "claude-opus-4-6" → "Opus 4.6", "claude-haiku-4-5-20251001" → "Haiku 4.5"
+// 모델 이름 정규화: "claude-opus-4-6" → "Opus 4.6", "claude-opus-5" → "Opus 5",
+// "claude-fable-5-1" → "Fable 5.1", "claude-haiku-4-5-20251001" → "Haiku 4.5"
 function formatModelName(raw) {
   if (!raw) return ""
-  var m = String(raw).match(/claude-(opus|sonnet|haiku)-(\d+)-(\d+)/)
+  var m = String(raw).match(/claude-(opus|sonnet|haiku|fable|mythos)-(\d+)(?:-(\d+))?/)
   if (!m) return raw
   var fam = m[1].charAt(0).toUpperCase() + m[1].slice(1)
-  return fam + " " + m[2] + "." + m[3]
+  return fam + " " + m[2] + (m[3] ? "." + m[3] : "")
 }
 
 // ─── Stats 핸들러 ───────────────────────────────────

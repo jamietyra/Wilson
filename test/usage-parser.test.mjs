@@ -134,3 +134,26 @@ test("getPricingSnapshot: pricing 객체 반환 (unitTokens + models)", () => {
   assert.equal(typeof snap.unitTokens, "number")
   assert.equal(typeof snap.models, "object")
 })
+
+test("pricing: 현행 모델 단가 등록 + 정확한 비용 계산 (Opus 5 / Fable 5.1 / Sonnet 5)", () => {
+  const snap = getPricingSnapshot()
+  for (const key of ["claude-fable-5-1", "claude-opus-5", "claude-sonnet-5"]) {
+    assert.ok(snap.models[key], `${key} 단가 등록됨`)
+  }
+  // Fable 5.1 캐시 읽기는 0.025x 예외 단가 ($0.25/MTok)
+  assert.equal(snap.models["claude-fable-5-1"].cacheRead, 0.25)
+  // Sonnet 5 표준가 $2/$10
+  assert.equal(snap.models["claude-sonnet-5"].input, 2)
+  assert.equal(snap.models["claude-sonnet-5"].output, 10)
+
+  // Opus 5: input 1M×$5 + output 1M×$25 = $30 (fallback 아님)
+  const result = parseUsageEvent({
+    message: {
+      model: "claude-opus-5[1m]",
+      usage: { input_tokens: 1_000_000, output_tokens: 1_000_000 },
+    },
+  })
+  assert.ok(result)
+  assert.equal(result.normalizedModel, "claude-opus-5")
+  assert.equal(result.costUSD, 30)
+})
