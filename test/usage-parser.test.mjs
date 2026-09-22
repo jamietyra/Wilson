@@ -157,3 +157,23 @@ test("pricing: 현행 모델 단가 등록 + 정확한 비용 계산 (Opus 5 / F
   assert.equal(result.normalizedModel, "claude-opus-5")
   assert.equal(result.costUSD, 30)
 })
+
+test("pricing: Opus 5.5 단가 ($4/$20, 캐시 읽기 0.05x 예외)", () => {
+  const rates = getPricingSnapshot().models["claude-opus-5-5"]
+  assert.ok(rates, "claude-opus-5-5 단가 등록됨")
+  assert.equal(rates.cacheRead, 0.2) // 0.1x 공식이면 0.4 — 2배 과대
+
+  // input 1M×$4 + cache read 1M×$0.2 + output 1M×$20 = $24.2 (fallback 아님)
+  const result = parseUsageEvent({
+    message: {
+      model: "claude-opus-5-5[1m]",
+      usage: {
+        input_tokens: 1_000_000,
+        cache_read_input_tokens: 1_000_000,
+        output_tokens: 1_000_000,
+      },
+    },
+  })
+  assert.equal(result.normalizedModel, "claude-opus-5-5")
+  assert.equal(result.costUSD, 24.2)
+})

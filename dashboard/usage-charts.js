@@ -36,11 +36,12 @@ const COLORS = {
 
 // ── 모델별 색상·라벨 (Daily 스택 막대 + Model 도넛 공용 SSOT) ──
 // 키 = normalizeModel 결과 (날짜·[1m] suffix 제거된 형태)
-// fable=분홍 · opus 5=진보라(최신) · 4.8=보라 · 4.7=파랑 · 4.6/4.5=와인(legacy)
+// fable=분홍 · opus 5.5=주황(최신) · 5=진보라 · 4.8=보라 · 4.7=파랑 · 4.6/4.5=와인(legacy)
 // sonnet 5=청록 · 4.6=녹색 · haiku 4.5=노랑
 const MODEL_COLORS = {
   "claude-fable-5-1": "#f472b6",
   "claude-fable-5": "#db2777",
+  "claude-opus-5-5": "#f97316",
   "claude-opus-5": "#7c3aed",
   "claude-opus-4-8": "#a855f7",
   "claude-opus-4-7": "#2563eb",
@@ -53,6 +54,7 @@ const MODEL_COLORS = {
 const MODEL_LABELS = {
   "claude-fable-5-1": "Fable 5.1",
   "claude-fable-5": "Fable 5",
+  "claude-opus-5-5": "Opus 5.5",
   "claude-opus-5": "Opus 5",
   "claude-opus-4-8": "Opus 4.8",
   "claude-opus-4-7": "Opus 4.7",
@@ -259,6 +261,7 @@ function modelColor(name) {
   const n = (name || "").toLowerCase()
   if (n.includes("fable") || n.includes("mythos")) return MODEL_COLORS["claude-fable-5-1"]
   if (n.includes("opus")) {
+    if (n.includes("5-5") || n.includes("5.5")) return MODEL_COLORS["claude-opus-5-5"]
     if (n.includes("4-8") || n.includes("4.8")) return MODEL_COLORS["claude-opus-4-8"]
     if (n.includes("4-7") || n.includes("4.7")) return MODEL_COLORS["claude-opus-4-7"]
     if (n.includes("4-6") || n.includes("4.6")) return MODEL_COLORS["claude-opus-4-6"]
