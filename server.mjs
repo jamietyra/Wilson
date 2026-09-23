@@ -16,7 +16,7 @@ import { aggregateAll } from "./lib/aggregator.mjs"
 import { computeAllowedOrigins, matchOrigin } from "./lib/cors-guard.mjs"
 import { createLogger } from "./lib/logger.mjs"
 import { computeAllowedRoots, isPathAllowed } from "./lib/path-guard.mjs"
-import { parseUsageEvent } from "./lib/usage-parser.mjs"
+import { isRepeatedUsage, parseUsageEvent } from "./lib/usage-parser.mjs"
 
 const log = createLogger("server")
 
@@ -716,6 +716,8 @@ function watchTranscript(transcriptPath, state, projectName, subagentInfo) {
 
   // 이 감시자 호출 중 누적된 usage delta들 (processAndBroadcast가 비움)
   const pendingUsageDeltas = []
+  // 같은 응답의 반복 줄(content block별) usage는 한 번만 — isRepeatedUsage 참고
+  const lastUsageMsg = { id: null }
 
   function readNewLines() {
     let stat
@@ -748,7 +750,7 @@ function watchTranscript(transcriptPath, state, projectName, subagentInfo) {
         // ── usage delta 추출 (Step 5 — monitor-usage 실시간 갱신) ──
         // 서브에이전트 파일이면 agentId를 주입해야 parser가 인지
         if (subagentInfo) entry.__agentId = subagentInfo.agentId
-        const usageParsed = parseUsageEvent(entry)
+        const usageParsed = isRepeatedUsage(entry, lastUsageMsg) ? null : parseUsageEvent(entry)
         if (usageParsed) {
           // slug: transcript 최상위 필드 (세션 레이블용) — SSE 실시간 delta에도 전파
           const slug = typeof entry.slug === "string" && entry.slug ? entry.slug : null

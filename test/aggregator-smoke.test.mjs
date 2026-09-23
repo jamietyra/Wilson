@@ -114,3 +114,41 @@ test("aggregateAll: 존재하지 않는 projectsDir은 빈 index 반환", async 
     if (fs.existsSync(cachePath)) fs.unlinkSync(cachePath)
   }
 })
+
+test("aggregateAll: 한 응답이 여러 줄로 기록돼도 usage는 1번만 집계 (증분 경계 포함)", async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "wilson-dedup-"))
+  const projDir = path.join(root, "dedup-base-proj")
+  fs.mkdirSync(projDir)
+  const file = path.join(projDir, "sess-d.jsonl")
+  const cachePath = makeTempCachePath()
+  // CC는 응답 1개를 content block마다 한 줄씩 쓰고 줄마다 같은 usage를 복사한다
+  const line = (uuid, id) =>
+    JSON.stringify({
+      type: "assistant",
+      timestamp: "2026-04-16T10:00:00Z",
+      sessionId: "sess-d",
+      uuid,
+      message: {
+        id,
+        model: "claude-opus-4-6",
+        role: "assistant",
+        usage: { input_tokens: 100, output_tokens: 10 },
+      },
+    })
+  const run = () => aggregateAll({ projectsDir: root, baseDirName: "dedup-base", cachePath })
+  try {
+    // 1차 스캔: msg_A의 첫 2줄까지만 기록된 시점
+    fs.writeFileSync(file, `${line("u1", "msg_A")}\n${line("u2", "msg_A")}\n`)
+    let day = (await run()).byDate["2026-04-16"]
+    assert.equal(day.tokens.input, 100, "같은 응답 2줄 → 1번")
+
+    // 2차 스캔: msg_A의 3번째 줄(커서 이후) + 새 응답 msg_B
+    fs.appendFileSync(file, `${line("u3", "msg_A")}\n${line("u4", "msg_B")}\n`)
+    day = (await run()).byDate["2026-04-16"]
+    assert.equal(day.tokens.input, 200, "msg_A 1번 + msg_B 1번")
+    assert.equal(day.tokens.output, 20)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+    if (fs.existsSync(cachePath)) fs.unlinkSync(cachePath)
+  }
+})
