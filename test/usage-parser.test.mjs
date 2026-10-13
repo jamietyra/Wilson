@@ -177,3 +177,34 @@ test("pricing: Opus 5.5 단가 ($4/$20, 캐시 읽기 0.05x 예외)", () => {
   assert.equal(result.normalizedModel, "claude-opus-5-5")
   assert.equal(result.costUSD, 24.2)
 })
+
+test("pricing: Sonnet 5.5 단가 ($2/$10, 캐시 읽기 0.05x 예외 $0.10)", () => {
+  // input 1M×$2 + cache read 1M×$0.1 + output 1M×$10 = $12.1 (Sonnet 5 fallback이면 12.2)
+  const result = parseUsageEvent({
+    message: {
+      model: "claude-sonnet-5-5",
+      usage: {
+        input_tokens: 1_000_000,
+        cache_read_input_tokens: 1_000_000,
+        output_tokens: 1_000_000,
+      },
+    },
+  })
+  assert.equal(result.normalizedModel, "claude-sonnet-5-5")
+  assert.ok(Math.abs(result.costUSD - 12.1) < 1e-9, `got ${result.costUSD}`)
+})
+
+test("pricing: Haiku 5.5 프롬프트 길이 구간 단가 (100K 이하 / 초과)", () => {
+  const cost = (usage) => parseUsageEvent({ message: { model: "claude-haiku-5-5", usage } }).costUSD
+  // 100K 이하: 100K×$0.1 + 10K×$0.5 = $0.015 (경계값 100,000은 저가 구간)
+  const short = cost({ input_tokens: 100_000, output_tokens: 10_000 })
+  assert.ok(Math.abs(short - 0.015) < 1e-12, `short got ${short}`)
+  // 초과: 프롬프트 = input + cache read (+ write) = 201K → 전 토큰 고가 구간
+  // 1K×$0.5 + 200K×$0.05 + 1M×$2.5 = $2.5105
+  const long = cost({
+    input_tokens: 1_000,
+    cache_read_input_tokens: 200_000,
+    output_tokens: 1_000_000,
+  })
+  assert.ok(Math.abs(long - 2.5105) < 1e-9, `long got ${long}`)
+})

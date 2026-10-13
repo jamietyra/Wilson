@@ -47,8 +47,10 @@ const MODEL_COLORS = {
   "claude-opus-4-7": "#2563eb",
   "claude-opus-4-6": "#8e1e3a",
   "claude-opus-4-5": "#6b1229",
+  "claude-sonnet-5-5": "#06b6d4",
   "claude-sonnet-5": "#14b8a6",
   "claude-sonnet-4-6": "#22c55e",
+  "claude-haiku-5-5": "#facc15",
   "claude-haiku-4-5": "#eab308",
 }
 const MODEL_LABELS = {
@@ -60,8 +62,10 @@ const MODEL_LABELS = {
   "claude-opus-4-7": "Opus 4.7",
   "claude-opus-4-6": "Opus 4.6",
   "claude-opus-4-5": "Opus 4.5",
+  "claude-sonnet-5-5": "Sonnet 5.5",
   "claude-sonnet-5": "Sonnet 5",
   "claude-sonnet-4-6": "Sonnet 4.6",
+  "claude-haiku-5-5": "Haiku 5.5",
   "claude-haiku-4-5": "Haiku 4.5",
 }
 
@@ -269,10 +273,14 @@ function modelColor(name) {
     return MODEL_COLORS["claude-opus-5"] // 그 외 opus는 최신(Opus 5) 색
   }
   if (n.includes("sonnet")) {
+    if (n.includes("5-5") || n.includes("5.5")) return MODEL_COLORS["claude-sonnet-5-5"]
     if (n.includes("4-6") || n.includes("4.6")) return MODEL_COLORS["claude-sonnet-4-6"]
     return MODEL_COLORS["claude-sonnet-5"]
   }
-  if (n.includes("haiku")) return MODEL_COLORS["claude-haiku-4-5"]
+  if (n.includes("haiku")) {
+    if (n.includes("5-5") || n.includes("5.5")) return MODEL_COLORS["claude-haiku-5-5"]
+    return MODEL_COLORS["claude-haiku-4-5"]
+  }
   return COLORS.unknown
 }
 
