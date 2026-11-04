@@ -76,7 +76,7 @@ test("aggregateAll: byModel에 모델별 집계", async () => {
   }
 })
 
-test("aggregateAll: byHour에 UTC 시간대별 집계 (fixture는 10시 bucket에 2건)", async () => {
+test("aggregateAll: byHour에 KST 시간대별 집계 (fixture 10:00Z = KST 19시 bucket에 2건)", async () => {
   const cachePath = makeTempCachePath()
   try {
     const index = await aggregateAll({
@@ -87,14 +87,14 @@ test("aggregateAll: byHour에 UTC 시간대별 집계 (fixture는 10시 bucket�
 
     const day = index.byDate["2026-04-16"]
     assert.ok(day.byHour, "byHour 존재")
-    // fixture: 10:00Z, 10:05Z → hour=10 bucket에 2건 누적
-    assert.ok(day.byHour["10"], "hour=10 bucket 존재")
-    assert.equal(day.byHour["10"].tokens.input, 1500, "10시 input 1000+500")
-    assert.equal(day.byHour["10"].tokens.output, 800, "10시 output 500+300")
-    assert.equal(day.byHour["10"].prompts, 2, "10시 prompts 2건")
-    assert.ok(day.byHour["10"].costUSD > 0, "10시 costUSD 양수")
+    // fixture: 10:00Z, 10:05Z → KST 19시 bucket에 2건 누적
+    assert.ok(day.byHour["19"], "hour=19 bucket 존재")
+    assert.equal(day.byHour["19"].tokens.input, 1500, "19시 input 1000+500")
+    assert.equal(day.byHour["19"].tokens.output, 800, "19시 output 500+300")
+    assert.equal(day.byHour["19"].prompts, 2, "19시 prompts 2건")
+    assert.ok(day.byHour["19"].costUSD > 0, "19시 costUSD 양수")
     // schemaVersion 확인
-    assert.equal(index.schemaVersion, 3)
+    assert.equal(index.schemaVersion, 4)
   } finally {
     if (fs.existsSync(cachePath)) fs.unlinkSync(cachePath)
   }

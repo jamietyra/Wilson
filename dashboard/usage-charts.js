@@ -380,7 +380,7 @@ function renderTopProjects(usageData, period) {
 }
 
 // ── Hourly Heatmap (요일 × 시간) — #32 ──────────────────
-// byHour 는 UTC 기준. matrix[weekday(0=Sun..6=Sat)][hour(0..23)] = tokens 누적.
+// byHour 는 KST 기준 (byDate 날짜도 KST). matrix[weekday(0=Sun..6=Sat)][hour(0..23)] = tokens 누적.
 function sumTokenObj(tokens) {
   if (!tokens) return 0
   let total = 0

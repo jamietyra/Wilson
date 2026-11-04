@@ -12,7 +12,7 @@ import http from "node:http"
 import os from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import { aggregateAll } from "./lib/aggregator.mjs"
+import { aggregateAll, isoDateOnly } from "./lib/aggregator.mjs"
 import { computeAllowedOrigins, matchOrigin } from "./lib/cors-guard.mjs"
 import { createLogger } from "./lib/logger.mjs"
 import { computeAllowedRoots, isPathAllowed } from "./lib/path-guard.mjs"
@@ -846,7 +846,7 @@ function watchTranscript(transcriptPath, state, projectName, subagentInfo) {
       for (const item of snapshot) {
         const p = item.parsed
         const payload = {
-          date: isoDateFromTs(p.timestamp),
+          date: isoDateOnly(p.timestamp),
           sessionId: p.sessionId || null,
           isSidechain: p.isSidechain === true,
           agentId: p.agentId || null,
@@ -990,14 +990,6 @@ const USAGE_CACHE_TTL_MS = 5000
 let usageCache = { ts: 0, data: null, inflight: null }
 
 // ─── Usage 실시간 patch 유틸 (Step 5 SSE usage_delta) ────
-
-/** ISO timestamp → 'YYYY-MM-DD' (UTC 기준, aggregator.isoDateOnly와 동일 규칙). */
-function isoDateFromTs(ts) {
-  if (!ts) return null
-  const d = new Date(ts)
-  if (Number.isNaN(d.getTime())) return null
-  return d.toISOString().slice(0, 10)
-}
 
 function _emptyUsageTokens() {
   return { input: 0, cacheWrite1h: 0, cacheWrite5m: 0, cacheRead: 0, output: 0 }
