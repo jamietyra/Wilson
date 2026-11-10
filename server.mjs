@@ -105,6 +105,7 @@ const MAX_EVENTS = 200000
 // 결과적으로 push당 평균 비용은 O(1) — 40000 push마다 1번 O(n) (20만 기준).
 // 메모리: 이벤트 1건 ~500B 가정 시 약 100MB peak — 데스크탑 환경 안전.
 const EVENTS_COMPACT_THRESHOLD = Math.floor(MAX_EVENTS * 1.25)
+const INITIAL_TAIL_BYTES = 16 * 1024 * 1024 // transcript 초기 로드 범위 (파일 끝 16MB)
 
 // ─── 적응형 디바운스 — 부하 기반 ─────────────────────────
 // 최근 1분 이벤트 수에 따라 debounce 지연 조정.
@@ -708,9 +709,15 @@ function broadcast(eventType, data) {
 
 function watchTranscript(transcriptPath, state, projectName, subagentInfo) {
   const cacheKey = path.basename(transcriptPath)
-  // 초기 로드는 항상 0부터 (히스토리 전체 읽기)
-  // offset 캐시는 초기 로드 후 실시간 감시에서만 사용
+  // 초기 로드는 파일 끝 INITIAL_TAIL_BYTES 만 읽는다 (offset 캐시는 초기 로드 후 실시간 감시에서만 사용)
+  // ponytail: 248MB transcript 통째 읽기로 시작 피크 1.3GB 였음. 재시작 직후 피드 히스토리가 더 길게 필요하면 값을 키울 것
   let byteOffset = 0
+  try {
+    byteOffset = Math.max(0, fs.statSync(transcriptPath).size - INITIAL_TAIL_BYTES)
+  } catch {
+    /* 없으면 readNewLines 가 빈 배열 */
+  }
+  let skipPartialLine = byteOffset > 0 // 중간에서 자르면 첫 줄은 잘린 줄
   let lineBuf = ""
   let debounceTimer = null
 
@@ -740,6 +747,10 @@ function watchTranscript(transcriptPath, state, projectName, subagentInfo) {
     const chunk = lineBuf + buf.toString("utf8")
     const lines = chunk.split("\n")
     lineBuf = lines.pop() || ""
+    if (skipPartialLine) {
+      lines.shift()
+      skipPartialLine = false
+    }
 
     const allEvents = []
     for (const line of lines) {
